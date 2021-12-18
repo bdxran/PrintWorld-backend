@@ -1,11 +1,12 @@
 package com.rbl.printworld.services;
 
+import com.rbl.printworld.models.Model;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-
 public interface ToolService {
-	File transferMultipartFileToFile(MultipartFile multipartFile);
+	String transferMultipartFileToFile(MultipartFile multipartFile);
 
-	File saveFile(File file);
+	void getExtensionFile(Model model);
+
+	void saveFile(String pathFileTmp, Model model);
 }

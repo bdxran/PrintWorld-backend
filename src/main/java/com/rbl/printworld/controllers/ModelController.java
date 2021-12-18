@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/model")
@@ -40,36 +38,31 @@ public class ModelController {
 	/**
 	 * Web Service to create new model
 	 *
+	 * @return a ResponseEntity
 	 * @RequestParam multipartFile
 	 * @RequestBody model
-	 * @return a ResponseEntity
 	 */
 	@PostMapping(value = "/create", consumes = "multipart/form-data")
 	public ResponseEntity<?> createModel(@RequestParam("file") MultipartFile multipartFile, @RequestParam("model") String modelJson) {
 		if (!userService.getAccessLevelUser(user)) {
-			throw new ApplicationException("500", "Bad access, level USER");
+			throw new ApplicationException("403", "Bad access, level USER");
 		}
-		log.info("Call to create model");
+		log.info("Call to create new model");
 
-		File file = toolService.transferMultipartFileToFile(multipartFile);
+		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile);
 
-		try {
-			Gson gson = new Gson();
-			Model model = gson.fromJson(modelJson, Model.class);
-			Model modelSave = modelService.createModel(file, model);
+		Gson gson = new Gson();
+		Model model = gson.fromJson(modelJson, Model.class);
+		Model modelSave = modelService.createModel(pathFileTmp, model);
 
-			log.info("New model is save and upload");
+		log.info("New model is save and upload");
 
-			MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
+		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
 
-			return ResponseEntity.ok()
-					.contentType(mediaType)
-					.header(HttpHeaders.CONTENT_DISPOSITION)
-					.body(new Gson().toJson(modelSave));
-		} catch (Exception ex) {
-			log.error(ex.getMessage());
-			throw new ApplicationException("500", ex.toString());
-		}
+		return ResponseEntity.ok()
+				.contentType(mediaType)
+				.header(HttpHeaders.CONTENT_DISPOSITION)
+				.body(new Gson().toJson(modelSave));
 	}
 
 	/**

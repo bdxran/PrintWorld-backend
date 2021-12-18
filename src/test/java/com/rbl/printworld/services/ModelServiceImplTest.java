@@ -33,7 +33,7 @@ public class ModelServiceImplTest {
 		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data\\test.zip");
 
 
-		Model saveModel = modelService.createModel(file, model);
+		Model saveModel = modelService.createModel(file.getAbsolutePath(), model);
 
 		Assert.assertNotNull(saveModel);
 		Assert.assertEquals("Model save and model expected is equal", saveModel, expectedModel);

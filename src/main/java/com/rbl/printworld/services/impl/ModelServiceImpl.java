@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-
 @Service
 @Slf4j
 public class ModelServiceImpl implements ModelService {
@@ -25,19 +23,20 @@ public class ModelServiceImpl implements ModelService {
 	}
 
 	@Override
-	public Model createModel(File file, Model model) {
+	public Model createModel(String pathFileTmp, Model model) {
+		toolService.getExtensionFile(model);
 		if (!model.getExtension().equals("zip")) {
-			log.error("File to send isn't zip!");
-			throw new ApplicationException("500", "File upload isn't zip!");
+			log.warn("File to send isn't zip, is : " + model.getExtension());
+			throw new ApplicationException("415", "File upload isn't zip!");
 		}
+
 		log.info("Save to new model into DB");
+
 		String nameFile = model.getNameFile().replace(" ", "_");
 		model.setNameFile(nameFile);
 
-		toolService.saveFile(file);
+		toolService.saveFile(pathFileTmp, model);
 
-		Model modelSave = modelRepository.save(model);
-
-		return modelSave;
+		return modelRepository.save(model);
 	}
 }
