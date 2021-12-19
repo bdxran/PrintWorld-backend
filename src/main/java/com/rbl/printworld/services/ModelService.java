@@ -4,5 +4,5 @@ import com.rbl.printworld.models.Model;
 
 public interface ModelService {
 
-	Model createModel(String pathFileTmp, Model model);
+	Model createModel(String id, String pathFileTmp, Model model);
 }

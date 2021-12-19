@@ -1,6 +1,5 @@
 package com.rbl.printworld.services.impl;
 
-import com.rbl.printworld.exceptions.ApplicationException;
 import com.rbl.printworld.models.Model;
 import com.rbl.printworld.repositories.ModelRepository;
 import com.rbl.printworld.services.ModelService;
@@ -23,19 +22,13 @@ public class ModelServiceImpl implements ModelService {
 	}
 
 	@Override
-	public Model createModel(String pathFileTmp, Model model) {
-		toolService.getExtensionFile(model);
-		if (!model.getExtension().equals("zip")) {
-			log.warn("File to send isn't zip, is : " + model.getExtension());
-			throw new ApplicationException("415", "File upload isn't zip!");
-		}
-
+	public Model createModel(String id, String pathFileTmp, Model model) {
 		log.info("Save to new model into DB");
-
+		model.setId(id);
 		String nameFile = model.getNameFile().replace(" ", "_");
 		model.setNameFile(nameFile);
 
-		toolService.saveFile(pathFileTmp, model);
+		toolService.saveFile(pathFileTmp);
 
 		return modelRepository.save(model);
 	}

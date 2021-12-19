@@ -14,6 +14,8 @@ import org.springframework.integration.annotation.IntegrationComponentScan;
 public class Application implements CommandLineRunner {
 
 	private final PrintWorldProperties properties;
+	//TODO Faire en sorte que le metaCounter soit sauver à la fermeture de l'application
+	//TODO Ajouter une vérification que toutes les properties soient disponibles
 
 	@Autowired
 	public Application(PrintWorldProperties properties) {
@@ -30,7 +32,8 @@ public class Application implements CommandLineRunner {
 		log.info("Application PrintWorld is run with configuration :");
 		log.info("------------------------");
 		log.info("Repository for tmp is : " + properties.getTmp());
-		log.info("Repository for data is : " + properties.getRepertoryData());
+		log.info("Repository for data is : " + properties.getRepositoryData());
+		log.info("File metaCounter is : " + properties.getMetaCounter());
 	}
 
 }

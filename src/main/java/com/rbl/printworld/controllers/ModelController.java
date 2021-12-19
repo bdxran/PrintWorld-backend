@@ -47,13 +47,20 @@ public class ModelController {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}
+
 		log.info("Call to create new model");
-
-		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile);
-
 		Gson gson = new Gson();
 		Model model = gson.fromJson(modelJson, Model.class);
-		Model modelSave = modelService.createModel(pathFileTmp, model);
+
+		toolService.getExtensionFile(model);
+		if (!model.getExtension().equals("zip")) {
+			log.warn("File to send isn't zip, is : " + model.getExtension());
+			throw new ApplicationException("415", "File upload isn't zip!");
+		}
+
+		String id = toolService.generateId();
+		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile, id);
+		Model modelSave = modelService.createModel(id, pathFileTmp, model);
 
 		log.info("New model is save and upload");
 
@@ -73,7 +80,7 @@ public class ModelController {
 	 */
 	@PostMapping("/modify")
 	public ResponseEntity<Object> modifyModel(@RequestBody Model model) {
-		userService.getAccessLevelUser(user);
+		//TODO
 		return null;
 	}
 
@@ -85,7 +92,7 @@ public class ModelController {
 	 */
 	@PostMapping("/delete")
 	public ResponseEntity<Object> deleteModel(@RequestBody Model model) {
-		userService.getAccessLevelUser(user);
+		//TODO
 		return null;
 	}
 }
