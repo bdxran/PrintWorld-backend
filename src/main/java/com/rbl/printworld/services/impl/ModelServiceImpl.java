@@ -28,8 +28,29 @@ public class ModelServiceImpl implements ModelService {
 		String nameFile = model.getNameFile().replace(" ", "_");
 		model.setNameFile(nameFile);
 
-		toolService.saveFile(pathFileTmp);
+		toolService.saveFile(id, pathFileTmp);
 
 		return modelRepository.save(model);
+	}
+
+	@Override
+	public Model modifyModel(String pathFileTmp, Model model) {
+		log.info("Modify model into DB");
+		String nameFile = model.getNameFile().replace(" ", "_");
+		model.setNameFile(nameFile);
+
+		toolService.saveFile(model.getId(), pathFileTmp);
+
+		return modelRepository.save(model);
+	}
+
+	@Override
+	public boolean deleteModel(Model model) {
+		log.info("Delete model from DB");
+
+		modelRepository.delete(model);
+		toolService.deleteFile(model.getId());
+
+		return true;
 	}
 }

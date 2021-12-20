@@ -15,6 +15,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -57,9 +59,14 @@ public class ToolServiceImpl implements ToolService {
 	}
 
 	@Override
-	public void saveFile(String pathFileTmp) {
-		String filename = pathFileTmp.substring(pathFileTmp.lastIndexOf(File.separator)).replace("tmp_", "");
+	public void saveFile(String id, String pathFileTmp) {
+		String filename = id + ".zip";
 		copyFile(filename, pathFileTmp);
+	}
+
+	@Override
+	public void deleteFile(String id) {
+		//TODO
 	}
 
 	@Override
@@ -83,12 +90,13 @@ public class ToolServiceImpl implements ToolService {
 	 * @param toCopied
 	 */
 	private void copyFile(String filename, String toCopied) {
+		String pathFilename = getPathFile(filename);
 		File fileToCopied = new File(toCopied);
 		if (!fileToCopied.exists()) {
 			log.error("File is not found : {}", fileToCopied.getPath());
 			throw new ApplicationException("404", "File is not found : " + fileToCopied.getPath());
 		}
-		File copyFile = new File(this.properties.getRepositoryData() + File.separator + filename);
+		File copyFile = new File(pathFilename);
 
 		Path source = Paths.get(fileToCopied.getAbsolutePath());
 		Path target = Paths.get(copyFile.getAbsolutePath());
@@ -149,6 +157,36 @@ public class ToolServiceImpl implements ToolService {
 			log.error("MetaCounter file is void!" + ex.getMessage());
 			throw new ApplicationException("500", "MetaCounter file is void!");
 		}
+	}
+
+	private String getPathFile(String filename) {
+		String year = filename.substring(2,6);
+		String month = filename.substring(6,8);
+		String day = filename.substring(8,10);
+		String folder = filename.substring(15,17);
+		String path = this.properties.getRepositoryData() + File.separator + year + File.separator + month
+				+ File.separator + day + File.separator + folder;
+
+		createFolder(path);
+
+		return path + File.separator + filename;
+	}
+
+	private boolean createFolder(String path) {
+		path = path.replaceAll("\\\\", "\\/");
+		log.debug("Path to check : {}", path);
+		Pattern p = Pattern.compile("^*\\.\\w*$");
+		Matcher m = p.matcher(path);
+		if (m.find()) {
+			path = path.substring(0, path.lastIndexOf("/"));
+		}
+		File folder = new File(path);
+		if (!folder.exists()) {
+			folder.mkdirs();
+			log.info("Create repository : {}", path);
+			return true;
+		}
+		return false;
 	}
 
 	private void indentMetaCounter() {

@@ -8,7 +8,9 @@ public interface ToolService {
 
 	void getExtensionFile(Model model);
 
-	void saveFile(String pathFileTmp);
+	void saveFile(String id, String pathFileTmp);
+
+	void deleteFile(String id);
 
 	String generateId();
 }
