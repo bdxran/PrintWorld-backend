@@ -35,6 +35,13 @@ public class ToolServiceImpl implements ToolService {
 		this.properties = properties;
 	}
 
+	/**
+	 * The transfer contains upload file to tmp file
+	 *
+	 * @param multipartFile
+	 * @param id
+	 * @return path tmp file
+	 */
 	@Override
 	public String transferMultipartFileToFile(MultipartFile multipartFile, String id) {
 		log.info("Transfer multipartFile to file : " + multipartFile.getOriginalFilename());
@@ -49,6 +56,12 @@ public class ToolServiceImpl implements ToolService {
 		}
 	}
 
+	/**
+	 * Recover extension for upload file
+	 *
+	 * @param model
+	 * @param nameFile
+	 */
 	@Override
 	public void getExtensionFile(Model model, String nameFile) {
 		log.info("Get extension file");
@@ -57,15 +70,27 @@ public class ToolServiceImpl implements ToolService {
 		model.setExtension(extension);
 	}
 
+	/**
+	 * Save file into data repertory
+	 *
+	 * @param id
+	 * @param pathFileTmp
+	 */
 	@Override
 	public void saveFile(String id, String pathFileTmp) {
 		String filename = id + ".zip";
 		copyFile(filename, pathFileTmp);
 	}
 
+	/**
+	 * Delete file into provided repertory
+	 *
+	 * @param path
+	 * @param id
+	 */
 	@Override
-	public void deleteFile(String id) {
-		File fileToDelete = new File(getPathFile(id) + ".zip");
+	public void deleteFile(String path, String id) {
+		File fileToDelete = new File(path + File.separator + id + ".zip");
 		log.info("Delete file path " + fileToDelete.getAbsolutePath());
 
 		if (!fileToDelete.delete()) {
@@ -74,6 +99,11 @@ public class ToolServiceImpl implements ToolService {
 		}
 	}
 
+	/**
+	 * Generate id for model
+	 *
+	 * @return id model
+	 */
 	@Override
 	public String generateId() {
 		String pattern = "yyyyMMdd";
@@ -89,14 +119,15 @@ public class ToolServiceImpl implements ToolService {
 		return genId;
 	}
 
-	/***
-	 * Copy only file. Don't use for folder because copy folder without content.
+	/**
+	 * Copy only file. Don't use for folder because copy folder without content
+	 *
 	 * @param filename
-	 * @param toCopied
+	 * @param pathFileToCopied
 	 */
-	private void copyFile(String filename, String toCopied) {
+	private void copyFile(String filename, String pathFileToCopied) {
 		String pathFilename = getPathFile(filename);
-		File fileToCopied = new File(toCopied);
+		File fileToCopied = new File(pathFileToCopied);
 		if (!fileToCopied.exists()) {
 			log.error("File is not found : {}", fileToCopied.getPath());
 			throw new ApplicationException("404", "File is not found : " + fileToCopied.getPath());
@@ -112,9 +143,16 @@ public class ToolServiceImpl implements ToolService {
 		} catch (IOException e) {
 			log.error("Cannot copy file/folder {} to {}, error {}", filename, copyFile.getPath(), e);
 			throw new ApplicationException("500", "Cannot move file/folder " + filename + " to " + copyFile.getPath());
+		} finally {
+			deleteFile(properties.getTmp(), filename);
 		}
 	}
 
+	/**
+	 * Generate code base 32 for id
+	 *
+	 * @return code base 32
+	 */
 	private String encode32() {
 		if (this.metaCounter <= 0) {
 			getMetaCounter();
@@ -142,6 +180,9 @@ public class ToolServiceImpl implements ToolService {
 		return null;
 	}
 
+	/**
+	 * Read file metaCounter for recover id number
+	 */
 	private void getMetaCounter() {
 		log.info("Get metaCounter");
 		try {
@@ -164,6 +205,12 @@ public class ToolServiceImpl implements ToolService {
 		}
 	}
 
+	/**
+	 * Generate the repertories path for save zip
+	 *
+	 * @param filename
+	 * @return path for save file
+	 */
 	private String getPathFile(String filename) {
 		String year = filename.substring(2, 6);
 		String month = filename.substring(6, 8);
@@ -182,6 +229,12 @@ public class ToolServiceImpl implements ToolService {
 		return path + File.separator + filename;
 	}
 
+	/**
+	 * Create a folder follow the path
+	 *
+	 * @param path
+	 * @return status for create folder
+	 */
 	private boolean createFolder(String path) {
 		path = path.replaceAll("\\\\", "\\/");
 		log.debug("Path to check : {}", path);
@@ -199,6 +252,9 @@ public class ToolServiceImpl implements ToolService {
 		return false;
 	}
 
+	/**
+	 * Indent id counter from metaCounter
+	 */
 	private void indentMetaCounter() {
 		this.metaCounter++;
 	}

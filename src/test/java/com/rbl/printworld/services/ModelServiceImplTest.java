@@ -2,14 +2,12 @@ package com.rbl.printworld.services;
 
 import com.rbl.printworld.models.Model;
 import com.rbl.printworld.models.PrintWorldProperties;
-import com.rbl.printworld.repositories.ModelRepository;
 import com.rbl.printworld.services.impl.ModelServiceImpl;
 import com.rbl.printworld.services.impl.ToolServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -30,7 +28,7 @@ public class ModelServiceImplTest {
 	public void createModelTest() {
 		ToolServiceImpl toolService = new ToolServiceImpl(printWorldProperties);
 		//TODO use mock
-		ModelServiceImpl modelService = new ModelServiceImpl(toolService,null);
+		ModelServiceImpl modelService = new ModelServiceImpl(toolService, null, printWorldProperties);
 		String id = toolService.generateId();
 
 		Model model = new Model(id, "testModel", "blabla",

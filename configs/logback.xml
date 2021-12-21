@@ -3,7 +3,7 @@
 
     <include resource="/org/springframework/boot/logging/logback/base.xml"/>
 
-    <property name="LOG_HOME" value="C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\logs" />
+    <property name="LOG_HOME" value="C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\logs"/>
 
     <timestamp key="startTimestamp" datePattern="yyyy-MM-dd"/>
 
@@ -33,7 +33,7 @@
     <logger name="com.rbl.printworld.config" level="INFO"/>
 
     <root level="INFO">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>

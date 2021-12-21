@@ -10,7 +10,7 @@ public interface ToolService {
 
 	void saveFile(String id, String pathFileTmp);
 
-	void deleteFile(String id);
+	void deleteFile(String path, String id);
 
 	String generateId();
 }
