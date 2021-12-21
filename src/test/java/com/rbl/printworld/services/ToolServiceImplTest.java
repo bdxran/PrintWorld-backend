@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ToolServiceImplTest {
 
 	private Model modelExpected = new Model("", "testModel", "blabla",
-			"test.zip", "zip", 1, 5, 1564489);
+			"test", "zip", 1, 5, 1564489);
 	private PrintWorldProperties printWorldProperties = new PrintWorldProperties("C:\\Users\\rbl\\Documents\\tmp",
 			"C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data",
 			"C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\configs\\metaCounter.txt");
@@ -34,7 +34,7 @@ public class ToolServiceImplTest {
 	public void getExtensionFileTest() {
 		String extensionExpected = "zip";
 
-		toolService.getExtensionFile(modelExpected);
+		toolService.getExtensionFile(modelExpected, "test.zip");
 
 		Assert.assertNotNull(modelExpected.getExtension());
 		Assert.assertEquals("The extension expected is equal from extension return by getExtensionFile", extensionExpected, modelExpected.getExtension());

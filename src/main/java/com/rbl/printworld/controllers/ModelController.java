@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -55,7 +52,7 @@ public class ModelController {
 		Gson gson = new Gson();
 		Model model = gson.fromJson(modelJson, Model.class);
 
-		toolService.getExtensionFile(model);
+		toolService.getExtensionFile(model, multipartFile.getOriginalFilename());
 		if (!model.getExtension().equals("zip")) {
 			log.warn("File to send isn't zip, is : " + model.getExtension());
 			throw new ApplicationException("415", "File upload isn't zip!");
@@ -92,7 +89,7 @@ public class ModelController {
 		Gson gson = new Gson();
 		Model model = gson.fromJson(modelJson, Model.class);
 
-		toolService.getExtensionFile(model);
+		toolService.getExtensionFile(model, multipartFile.getOriginalFilename());
 		if (!model.getExtension().equals("zip")) {
 			log.warn("File to send isn't zip, is : " + model.getExtension());
 			throw new ApplicationException("415", "File upload isn't zip!");
@@ -117,23 +114,20 @@ public class ModelController {
 	 * @return a ResponseEntity
 	 * @RequestBody model
 	 */
-	@PostMapping("/delete/{id}")
-	public ResponseEntity<Object> deleteModel(@RequestParam String modelJson) {
+	@DeleteMapping("/delete")
+	public ResponseEntity<Object> deleteModel(@RequestBody Model model) {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}
 
 		log.info("Call to delete model");
 
-		Gson gson = new Gson();
-		Model model = gson.fromJson(modelJson, Model.class);
-
-		if (modelService.deleteModel(model)) {
+		if (!modelService.deleteModel(model)) {
 			log.error("Model with id " + model.getId() + " isn't delete");
 			throw new ApplicationException("500", "Model with id " + model.getId() + " isn't delete");
 		}
 
-		log.info("Model is delete");
+		log.info("Model and file were delete");
 
 		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
 

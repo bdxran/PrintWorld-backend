@@ -25,8 +25,8 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public class ToolServiceImpl implements ToolService {
 
 	private int metaCounter;
-	private final String[] base32 = {"0","1","2","3","4","5","6","7","8","9","A","C","D","E","F","G","H","J","K","L","M",
-			"N","P","Q","R","S","T","U","V","W","X","Y","Z"};
+	private final String[] base32 = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M",
+			"N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
 	private final PrintWorldProperties properties;
 
@@ -50,10 +50,9 @@ public class ToolServiceImpl implements ToolService {
 	}
 
 	@Override
-	public void getExtensionFile(Model model) {
+	public void getExtensionFile(Model model, String nameFile) {
 		log.info("Get extension file");
 
-		String nameFile = model.getNameFile();
 		String extension = nameFile.substring(nameFile.lastIndexOf(".") + 1);
 		model.setExtension(extension);
 	}
@@ -66,7 +65,13 @@ public class ToolServiceImpl implements ToolService {
 
 	@Override
 	public void deleteFile(String id) {
-		//TODO
+		File fileToDelete = new File(getPathFile(id) + ".zip");
+		log.info("Delete file path " + fileToDelete.getAbsolutePath());
+
+		if (!fileToDelete.delete()) {
+			log.error("File with id " + id + " isn't delete");
+			throw new ApplicationException("500", "File with id " + id + " isn't delete");
+		}
 	}
 
 	@Override
@@ -117,12 +122,12 @@ public class ToolServiceImpl implements ToolService {
 		int num = this.metaCounter;
 		StringBuilder code = new StringBuilder();
 
-		while(num >= 1) {
+		while (num >= 1) {
 			code.append(this.base32[num % 32]);
 			//code += (base32.charAt(num % base32.length()));
-			num = num/32;
+			num = num / 32;
 		}
-		while (code.length()<6){
+		while (code.length() < 6) {
 			code.append("0");
 		}
 		code.reverse();
@@ -160,14 +165,19 @@ public class ToolServiceImpl implements ToolService {
 	}
 
 	private String getPathFile(String filename) {
-		String year = filename.substring(2,6);
-		String month = filename.substring(6,8);
-		String day = filename.substring(8,10);
-		String folder = filename.substring(15,17);
+		String year = filename.substring(2, 6);
+		String month = filename.substring(6, 8);
+		String day = filename.substring(8, 10);
+		String folder = filename.substring(15, 17);
 		String path = this.properties.getRepositoryData() + File.separator + year + File.separator + month
 				+ File.separator + day + File.separator + folder;
 
-		createFolder(path);
+		if (!new File(path).exists()) {
+			if (!createFolder(path)) {
+				log.error("Not create folder : " + path);
+				throw new ApplicationException("500", "Not create folder : " + path);
+			}
+		}
 
 		return path + File.separator + filename;
 	}

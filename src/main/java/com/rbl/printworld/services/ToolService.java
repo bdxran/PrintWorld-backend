@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ToolService {
 	String transferMultipartFileToFile(MultipartFile multipartFile, String id);
 
-	void getExtensionFile(Model model);
+	void getExtensionFile(Model model, String nameFile);
 
 	void saveFile(String id, String pathFileTmp);
 
