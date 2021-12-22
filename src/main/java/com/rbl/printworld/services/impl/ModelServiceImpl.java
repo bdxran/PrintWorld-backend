@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+
 @Service
 @Slf4j
 public class ModelServiceImpl implements ModelService {
@@ -74,7 +76,7 @@ public class ModelServiceImpl implements ModelService {
 		log.info("Delete model from DB");
 
 		modelRepository.delete(model);
-		toolService.deleteFile(properties.getRepositoryData(), model.getId());
+		toolService.deleteFile(properties.getRepositoryData() + File.separator + model.getId() + "." + model.getExtension());
 
 		return true;
 	}

@@ -85,17 +85,16 @@ public class ToolServiceImpl implements ToolService {
 	/**
 	 * Delete file into provided repertory
 	 *
-	 * @param path
-	 * @param id
+	 * @param pathFile
 	 */
 	@Override
-	public void deleteFile(String path, String id) {
-		File fileToDelete = new File(path + File.separator + id + ".zip");
+	public void deleteFile(String pathFile) {
+		File fileToDelete = new File(pathFile);
 		log.info("Delete file path " + fileToDelete.getAbsolutePath());
 
 		if (!fileToDelete.delete()) {
-			log.error("File with id " + id + " isn't delete");
-			throw new ApplicationException("500", "File with id " + id + " isn't delete");
+			log.error("File " + pathFile + " isn't delete");
+			throw new ApplicationException("500", "File " + pathFile + " isn't delete");
 		}
 	}
 
@@ -144,7 +143,7 @@ public class ToolServiceImpl implements ToolService {
 			log.error("Cannot copy file/folder {} to {}, error {}", filename, copyFile.getPath(), e);
 			throw new ApplicationException("500", "Cannot move file/folder " + filename + " to " + copyFile.getPath());
 		} finally {
-			deleteFile(properties.getTmp(), filename);
+			deleteFile(pathFileToCopied);
 		}
 	}
 

@@ -9,7 +9,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
 
 @RunWith(SpringRunner.class)
 @Import({ToolServiceImpl.class, PrintWorldProperties.class})
@@ -25,9 +30,25 @@ public class ToolServiceImplTest {
 	@Autowired
 	private ToolServiceImpl toolService;
 
+	//Not work
 	@Test
-	public void transferMultipartFileToFileTest() {
-		//TODO
+	public void transferMultipartFileToFileTest() throws IOException {
+		MultipartFile multipartFile = new MockMultipartFile(
+				"name",
+				"test.zip",
+				MediaType.APPLICATION_OCTET_STREAM_VALUE,
+				new FileInputStream("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data\\test.zip")
+				);
+
+		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile, "d-20211222-000001");
+		String pathFileTmpExpected = printWorldProperties.getTmp() + File.separator + "d-20211222-000001.zip";
+
+		Assert.assertNotNull(pathFileTmp);
+		Assert.assertEquals("Path tmp file is equal from path tmp file expected", pathFileTmpExpected, pathFileTmp);
+		File fileTmp = new File(pathFileTmpExpected);
+		if (!fileTmp.exists()) {
+			Assert.fail("Test not pass because file tmp isn't create!");
+		}
 	}
 
 	@Test
@@ -42,7 +63,24 @@ public class ToolServiceImplTest {
 
 	@Test
 	public void saveFileTest() {
-		//TODO
+		ToolServiceImpl toolService = new ToolServiceImpl(printWorldProperties);
+		File fileSave = new File(printWorldProperties.getRepositoryData() + File.separator + "2021" + File.separator + "12" + File.separator + "22" + File.separator + "01" + File.separator + "d-20211222-000001.zip");
+		toolService.saveFile("d-20211222-000001", "C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data\\test-1.zip");
+
+		if (!fileSave.exists()) {
+			Assert.fail("Test not pass because file isn't create!");
+		}
+	}
+
+	@Test
+	public void deleteTest() {
+		ToolServiceImpl toolService = new ToolServiceImpl(printWorldProperties);
+		File fileDelete = new File(printWorldProperties.getRepositoryData() + File.separator + "2021" + File.separator + "12" + File.separator + "22" + File.separator + "01" + File.separator + "d-20211222-000001.zip");
+		toolService.deleteFile(fileDelete.getAbsolutePath());
+
+		if (fileDelete.exists()) {
+			Assert.fail("Test not pass because file delete exist!");
+		}
 	}
 
 	@Test
