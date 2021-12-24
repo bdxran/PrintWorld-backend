@@ -1,8 +1,10 @@
 package com.rbl.printworld.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class PrintWorldProperties {

@@ -76,7 +76,8 @@ public class ModelServiceImpl implements ModelService {
 		log.info("Delete model from DB");
 
 		modelRepository.delete(model);
-		toolService.deleteFile(properties.getRepositoryData() + File.separator + model.getId() + "." + model.getExtension());
+		String pathFile = toolService.getPathFile(model.getId() + "." + model.getExtension());
+		toolService.deleteFile(pathFile);
 
 		return true;
 	}

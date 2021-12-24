@@ -13,4 +13,6 @@ public interface ToolService {
 	void deleteFile(String pathFile);
 
 	String generateId();
+
+	String getPathFile(String filename);
 }

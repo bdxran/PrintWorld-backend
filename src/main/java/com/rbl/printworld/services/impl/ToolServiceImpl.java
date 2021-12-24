@@ -119,6 +119,30 @@ public class ToolServiceImpl implements ToolService {
 	}
 
 	/**
+	 * Generate the repertories path for save zip
+	 *
+	 * @param filename
+	 * @return path for save file
+	 */
+	public String getPathFile(String filename) {
+		String year = filename.substring(2, 6);
+		String month = filename.substring(6, 8);
+		String day = filename.substring(8, 10);
+		String folder = filename.substring(15, 17);
+		String path = this.properties.getRepositoryData() + File.separator + year + File.separator + month
+				+ File.separator + day + File.separator + folder;
+
+		if (!new File(path).exists()) {
+			if (!createFolder(path)) {
+				log.error("Not create folder : " + path);
+				throw new ApplicationException("500", "Not create folder : " + path);
+			}
+		}
+
+		return path + File.separator + filename;
+	}
+
+	/**
 	 * Copy only file. Don't use for folder because copy folder without content
 	 *
 	 * @param filename
@@ -202,30 +226,6 @@ public class ToolServiceImpl implements ToolService {
 			log.error("MetaCounter file is void!" + ex.getMessage());
 			throw new ApplicationException("500", "MetaCounter file is void!");
 		}
-	}
-
-	/**
-	 * Generate the repertories path for save zip
-	 *
-	 * @param filename
-	 * @return path for save file
-	 */
-	private String getPathFile(String filename) {
-		String year = filename.substring(2, 6);
-		String month = filename.substring(6, 8);
-		String day = filename.substring(8, 10);
-		String folder = filename.substring(15, 17);
-		String path = this.properties.getRepositoryData() + File.separator + year + File.separator + month
-				+ File.separator + day + File.separator + folder;
-
-		if (!new File(path).exists()) {
-			if (!createFolder(path)) {
-				log.error("Not create folder : " + path);
-				throw new ApplicationException("500", "Not create folder : " + path);
-			}
-		}
-
-		return path + File.separator + filename;
 	}
 
 	/**

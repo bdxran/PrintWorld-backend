@@ -1,0 +1,17 @@
+[
+  {
+    "collectionName": "model",
+    "documents": [
+      {
+        "id": "m-20211224-000001",
+        "name": "testModel",
+        "description": "blabla",
+        "nameFile": "test",
+        "extension": "zip",
+        "numberElement": 1,
+        "note": 5,
+        "size": 1564489
+      }
+    ]
+  }
+]
