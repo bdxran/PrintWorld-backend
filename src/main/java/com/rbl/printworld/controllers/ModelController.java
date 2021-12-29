@@ -62,7 +62,7 @@ public class ModelController {
 		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile, id);
 		Model modelSave = modelService.createModel(id, pathFileTmp, multipartFile.getOriginalFilename(), model);
 
-		log.info("New model is save and upload");
+		log.info("New model is save");
 
 		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
 
@@ -98,7 +98,7 @@ public class ModelController {
 		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile, model.getId());
 		Model modelSave = modelService.modifyModel(pathFileTmp, model);
 
-		log.info("Model is save and upload");
+		log.info("Model is upload");
 
 		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
 
