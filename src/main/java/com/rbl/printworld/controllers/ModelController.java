@@ -60,7 +60,7 @@ public class ModelController {
 
 		String id = toolService.generateId();
 		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile, id);
-		Model modelSave = modelService.createModel(id, pathFileTmp, model);
+		Model modelSave = modelService.createModel(id, pathFileTmp, multipartFile.getOriginalFilename(), model);
 
 		log.info("New model is save and upload");
 

@@ -78,7 +78,7 @@ public class ModelServiceImplTest {
 			Assert.fail("Not create file test!");
 		}
 
-		Model saveModel = modelService.createModel(id, file.getAbsolutePath(), model);
+		Model saveModel = modelService.createModel(id, file.getAbsolutePath(), file.getName(), model);
 
 		Assert.assertNotNull(saveModel);
 		Assert.assertEquals("Model save and model expected is equal", saveModel, this.expectedCreateModel);

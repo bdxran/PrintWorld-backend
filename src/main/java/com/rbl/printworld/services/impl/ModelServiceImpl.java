@@ -36,11 +36,10 @@ public class ModelServiceImpl implements ModelService {
 	 * @return new model save into DB
 	 */
 	@Override
-	public Model createModel(String id, String pathFileTmp, Model model) {
+	public Model createModel(String id, String pathFileTmp, String nameFile, Model model) {
 		log.info("Save to new model into DB");
 		model.setId(id);
-		String nameFile = model.getNameFile().replace(" ", "_");
-		model.setNameFile(nameFile);
+		model.setNameFile(nameFile.replace(" ", "_"));
 
 		toolService.saveFile(id, pathFileTmp);
 
