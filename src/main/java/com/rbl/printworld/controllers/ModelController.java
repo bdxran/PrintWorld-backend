@@ -5,6 +5,7 @@ import com.rbl.printworld.exceptions.ApplicationException;
 import com.rbl.printworld.models.Access;
 import com.rbl.printworld.models.Model;
 import com.rbl.printworld.models.User;
+import com.rbl.printworld.models.dto.ListResponseDto;
 import com.rbl.printworld.services.ModelService;
 import com.rbl.printworld.services.ToolService;
 import com.rbl.printworld.services.UserService;
@@ -33,6 +34,43 @@ public class ModelController {
 		this.toolService = toolService;
 		this.userService = userService;
 		this.modelService = modelService;
+	}
+
+	/**
+	 * Web Service to get model by id
+	 *
+	 * @return a ResponseEntity
+	 * @Param String id
+	 */
+	@GetMapping("/byid/{id}")
+	public ResponseEntity<?> getModelById(@PathVariable String id) {
+		Model model = modelService.getModelById(id);
+
+		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
+
+		return ResponseEntity.ok()
+				.contentType(mediaType)
+				.header(HttpHeaders.CONTENT_DISPOSITION)
+				.body(new Gson().toJson(model));
+	}
+
+	/**
+	 * Web Service to get all model
+	 *
+	 * @return a ResponseEntity
+	 * @Param Integer page but not required
+	 * @Param Integer limit but not required
+	 */
+	@GetMapping("/all")
+	public ResponseEntity<?> getAllModel(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer limit) {
+		ListResponseDto<Model> models = modelService.getAllModel(page, limit);
+
+		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
+
+		return ResponseEntity.ok()
+				.contentType(mediaType)
+				.header(HttpHeaders.CONTENT_DISPOSITION)
+				.body(new Gson().toJson(models));
 	}
 
 	/**

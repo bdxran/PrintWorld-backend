@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document
-public class Model {
+public class Model implements ResponseModel {
 	@Id
 	private String id;
 	private String name;
