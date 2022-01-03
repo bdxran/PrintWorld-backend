@@ -152,13 +152,14 @@ public class ModelController {
 	 * @return a ResponseEntity
 	 * @RequestBody model
 	 */
-	@DeleteMapping("/delete")
-	public ResponseEntity<Object> deleteModel(@RequestBody Model model) {
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<Object> deleteModel(@PathVariable String id) {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}
 
-		log.info("Call to delete model");
+		log.info("Call to delete model for id : " + id);
+		Model model = modelService.getModelById(id);
 
 		if (!modelService.deleteModel(model)) {
 			log.error("Model with id " + model.getId() + " isn't delete");
