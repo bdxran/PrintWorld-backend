@@ -8,9 +8,7 @@ import com.rbl.printworld.services.impl.ToolServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mongounit.AssertMatchesDataset;
 import org.mongounit.MongoUnitTest;
-import org.mongounit.SeedWithDataset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -19,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
@@ -29,6 +26,11 @@ import java.util.List;
 public class ModelServiceImplTest {
 
 	private final String[] expectedArrayIdModels = new String[]{"m-20211224-000001", "m-20211224-000002"};
+	private final List<Integer> subCategoryIds = new ArrayList<>() {{
+		add((int) Math.random());
+		add((int) Math.random());
+		add((int) Math.random());
+	}};
 	private final Model expectedModel = Model.builder()
 			.id("m-20211224-000001")
 			.name("testModel")
@@ -38,6 +40,8 @@ public class ModelServiceImplTest {
 			.numberElement(1)
 			.note(5)
 			.size(1564489)
+			.categoryId((int) Math.random())
+			.subCategoryIds(subCategoryIds)
 			.build();
 	private final Model expectedModifyModel = Model.builder()
 			.id("m-20211224-000001")
@@ -48,6 +52,8 @@ public class ModelServiceImplTest {
 			.numberElement(1)
 			.note(5)
 			.size(1564489)
+			.categoryId((int) Math.random())
+			.subCategoryIds(subCategoryIds)
 			.build();
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
 			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\tmp")
@@ -141,7 +147,7 @@ public class ModelServiceImplTest {
 		Assert.assertTrue("Delete model isn't return true", checkDeleteModel);
 	}
 
-	private File createFileForTest(){
+	private File createFileForTest() {
 		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data\\2021\\12\\24\\01\\m-20211224-000001.zip");
 		try {
 			file.getParentFile().mkdirs();
