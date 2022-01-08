@@ -81,7 +81,7 @@ public class ModelController {
 	 * @RequestBody model
 	 */
 	@PostMapping(value = "/create", consumes = "multipart/form-data")
-	public ResponseEntity<?> createModel(@RequestParam("file") MultipartFile multipartFile, @RequestParam("model") String modelJson) {
+	public ResponseEntity<?> createModel(@RequestParam("file") MultipartFile file, @RequestParam("images") MultipartFile[] images, @RequestParam("model") String modelJson) {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}
@@ -90,15 +90,18 @@ public class ModelController {
 		Gson gson = new Gson();
 		Model model = gson.fromJson(modelJson, Model.class);
 
-		toolService.getExtensionFile(model, multipartFile.getOriginalFilename());
+		toolService.getExtensionFile(model, file.getOriginalFilename());
 		if (!model.getExtension().equals("zip")) {
 			log.warn("File to send isn't zip, is : " + model.getExtension());
 			throw new ApplicationException("415", "File upload isn't zip!");
 		}
 
 		String id = toolService.generateId();
-		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile, id);
-		Model modelSave = modelService.createModel(id, pathFileTmp, multipartFile.getOriginalFilename(), model);
+		String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, id);
+		if (images.length > 0) {
+			toolService.uploadImages(images, id);
+		}
+		Model modelSave = modelService.createModel(id, pathFileTmp, file.getOriginalFilename(), model);
 
 		log.info("New model is save");
 
@@ -133,7 +136,7 @@ public class ModelController {
 			throw new ApplicationException("415", "File upload isn't zip!");
 		}
 
-		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile, model.getId());
+		String pathFileTmp = toolService.transferMultipartFileToFileTmp(multipartFile, model.getId());
 		Model modelSave = modelService.modifyModel(pathFileTmp, model);
 
 		log.info("Model is upload");

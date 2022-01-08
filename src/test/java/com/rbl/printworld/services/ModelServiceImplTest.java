@@ -56,9 +56,9 @@ public class ModelServiceImplTest {
 			.subCategoryIds(subCategoryIds)
 			.build();
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
-			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\tmp")
-			.repositoryData("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data")
-			.metaCounter("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\configs\\metaCounter.txt")
+			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp")
+			.repositoryData("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data")
+			.metaCounter("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\configs\\metaCounter.txt")
 			.build();
 
 	@Autowired
@@ -148,7 +148,7 @@ public class ModelServiceImplTest {
 	}
 
 	private File createFileForTest() {
-		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data\\2021\\12\\24\\01\\m-20211224-000001.zip");
+		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\2021\\12\\24\\01\\m-20211224-000001.zip");
 		try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();

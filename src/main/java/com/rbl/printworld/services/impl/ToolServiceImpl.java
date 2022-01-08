@@ -43,7 +43,7 @@ public class ToolServiceImpl implements ToolService {
 	 * @return path tmp file
 	 */
 	@Override
-	public String transferMultipartFileToFile(MultipartFile multipartFile, String id) {
+	public String transferMultipartFileToFileTmp(MultipartFile multipartFile, String id) {
 		log.info("Transfer multipartFile to file : " + multipartFile.getOriginalFilename());
 		try {
 			File file = new File(this.properties.getTmp() + File.separator + "tmp_" + id + ".zip");
@@ -73,13 +73,13 @@ public class ToolServiceImpl implements ToolService {
 	/**
 	 * Save file into data repertory
 	 *
-	 * @param id
+	 * @param filename
 	 * @param pathFileTmp
+	 * @param id
 	 */
 	@Override
-	public void saveFile(String id, String pathFileTmp) {
-		String filename = id + ".zip";
-		copyFile(filename, pathFileTmp);
+	public void saveFile(String filename, String pathFileTmp, String id) {
+		copyFile(filename, pathFileTmp, id);
 	}
 
 	/**
@@ -124,11 +124,11 @@ public class ToolServiceImpl implements ToolService {
 	 * @param filename
 	 * @return path for save file
 	 */
-	public String getPathFile(String filename) {
-		String year = filename.substring(2, 6);
-		String month = filename.substring(6, 8);
-		String day = filename.substring(8, 10);
-		String folder = filename.substring(15, 17);
+	public String getPathFile(String filename, String id) {
+		String year = id.substring(2, 6);
+		String month = id.substring(6, 8);
+		String day = id.substring(8, 10);
+		String folder = id.substring(15, 17);
 		String path = this.properties.getRepositoryData() + File.separator + year + File.separator + month
 				+ File.separator + day + File.separator + folder;
 
@@ -143,13 +143,30 @@ public class ToolServiceImpl implements ToolService {
 	}
 
 	/**
+	 *
+	 */
+	public void uploadImages(MultipartFile[] images, String id) {
+		log.info("Upload images");
+		try {
+			for (MultipartFile image : images) {
+				log.info("Transfer multipartFile to file : " + image.getOriginalFilename());
+				File file = new File(this.properties.getTmp() + File.separator + image.getOriginalFilename());
+				image.transferTo(file);
+				saveFile(file.getName(), file.getAbsolutePath(), id);
+			}
+		} catch (IOException ex) {
+			throw new ApplicationException("500", "Error when transfer multipartFile to file!");
+		}
+	}
+
+	/**
 	 * Copy only file. Don't use for folder because copy folder without content
 	 *
 	 * @param filename
 	 * @param pathFileToCopied
 	 */
-	private void copyFile(String filename, String pathFileToCopied) {
-		String pathFilename = getPathFile(filename);
+	private void copyFile(String filename, String pathFileToCopied, String id) {
+		String pathFilename = getPathFile(filename, id);
 		File fileToCopied = new File(pathFileToCopied);
 		if (!fileToCopied.exists()) {
 			log.error("File is not found : {}", fileToCopied.getPath());

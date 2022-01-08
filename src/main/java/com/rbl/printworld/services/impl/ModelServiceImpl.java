@@ -65,7 +65,8 @@ public class ModelServiceImpl implements ModelService {
 		model.setId(id);
 		model.setNameFile(nameFile.replace(" ", "_"));
 
-		toolService.saveFile(id, pathFileTmp);
+		String filename = model.getId() + ".zip";
+		toolService.saveFile(filename, pathFileTmp, id);
 
 		return modelRepository.save(model);
 	}
@@ -83,7 +84,8 @@ public class ModelServiceImpl implements ModelService {
 		String nameFile = model.getNameFile().replace(" ", "_");
 		model.setNameFile(nameFile);
 
-		toolService.saveFile(model.getId(), pathFileTmp);
+		String filename = model.getId() + ".zip";
+		toolService.saveFile(filename, pathFileTmp, model.getId());
 
 		return modelRepository.save(model);
 	}
@@ -99,7 +101,7 @@ public class ModelServiceImpl implements ModelService {
 		log.info("Delete model from DB");
 
 		modelRepository.delete(model);
-		String pathFile = toolService.getPathFile(model.getId() + "." + model.getExtension());
+		String pathFile = toolService.getPathFile(model.getId() + "." + model.getExtension(), model.getId());
 		toolService.deleteFile(pathFile);
 
 		return true;

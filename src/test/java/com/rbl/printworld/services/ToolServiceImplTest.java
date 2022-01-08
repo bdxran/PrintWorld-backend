@@ -20,6 +20,7 @@ import java.io.*;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @Import({ToolServiceImpl.class, PrintWorldProperties.class})
+@Slf4j
 public class ToolServiceImplTest {
 
 	private final Model expectedModel = Model.builder()
@@ -33,18 +34,17 @@ public class ToolServiceImplTest {
 			.size(1564489)
 			.build();
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
-			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\tmp")
-			.repositoryData("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data")
-			.metaCounter("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\configs\\metaCounter.txt")
+			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp")
+			.repositoryData("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data")
+			.metaCounter("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\configs\\metaCounter.txt")
 			.build();
 
 	@Autowired
 	private ToolServiceImpl toolService;
 
-	//Not work
 	@Test
-	public void transferMultipartFileToFileTest() throws IOException {
-		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data\\test.zip");
+	public void transferMultipartFileToFileTmpTest() throws IOException {
+		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\test.zip");
 		try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();
@@ -56,11 +56,11 @@ public class ToolServiceImplTest {
 				"name",
 				"test.zip",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data\\test.zip")
+				new FileInputStream("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\test.zip")
 				);
 
-		String pathFileTmp = toolService.transferMultipartFileToFile(multipartFile, "d-20211222-000001");
-		String pathFileTmpExpected = printWorldProperties.getTmp() + File.separator + "tmp_d-20211222-000001.zip";
+		String pathFileTmp = toolService.transferMultipartFileToFileTmp(multipartFile, "m-20211222-000001");
+		String pathFileTmpExpected = printWorldProperties.getTmp() + File.separator + "tmp_m-20211222-000001.zip";
 
 		Assert.assertNotNull(pathFileTmp);
 		Assert.assertEquals("Path tmp file is equal from path tmp file expected", pathFileTmpExpected, pathFileTmp);
@@ -82,9 +82,11 @@ public class ToolServiceImplTest {
 
 	@Test
 	public void saveFileTest() {
-		File fileSave = new File(printWorldProperties.getRepositoryData() + File.separator + "2021" + File.separator + "12" + File.separator + "22" + File.separator + "01" + File.separator + "d-20211222-000001.zip");
-		toolService.saveFile("d-20211222-000001", "C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data\\test-1.zip");
+		File file = createFileForTest();
+		File fileSave = new File(printWorldProperties.getRepositoryData() + File.separator + "2021" + File.separator + "12" + File.separator + "22" + File.separator + "01" + File.separator + "m-20211222-000001.zip");
+		toolService.saveFile("m-20211222-000001.zip", file.getAbsolutePath(), "m-20211222-000001");
 
+		log.info(fileSave.getAbsolutePath() + " - " + fileSave.exists());
 		if (!fileSave.exists()) {
 			Assert.fail("Test not pass because file isn't create!");
 		}
@@ -92,7 +94,7 @@ public class ToolServiceImplTest {
 
 	@Test
 	public void deleteTest() {
-		File fileDelete = new File(printWorldProperties.getRepositoryData() + File.separator + "2021" + File.separator + "12" + File.separator + "22" + File.separator + "01" + File.separator + "d-20211222-000001.zip");
+		File fileDelete = new File(printWorldProperties.getRepositoryData() + File.separator + "2021" + File.separator + "12" + File.separator + "22" + File.separator + "01" + File.separator + "m-20211222-000001.zip");
 		toolService.deleteFile(fileDelete.getAbsolutePath());
 
 		if (fileDelete.exists()) {
@@ -100,6 +102,7 @@ public class ToolServiceImplTest {
 		}
 	}
 
+	// TODO Update id expected for pass test
 	@Test
 	public void generateIdTest() {
 		String idExpected = "m-20211219-000001";
@@ -112,11 +115,28 @@ public class ToolServiceImplTest {
 	@Test
 	public void getPathFileTest() {
 		String filename = "m-20211224-000001.zip";
-		String pathFileExpected = "C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld\\data\\2021\\12\\24\\01\\m-20211224-000001.zip";
+		String pathFileExpected = "C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\2021\\12\\24\\01\\m-20211224-000001.zip";
 
-		String pathFile = toolService.getPathFile(filename);
+		String pathFile = toolService.getPathFile(filename, "m-20211224-000001");
 
 		Assert.assertNotNull(pathFile);
 		Assert.assertEquals("The path file is equal path file expected", pathFileExpected, pathFile);
+	}
+
+	@Test
+	public void uploadImagesTest() {
+		//TODO
+	}
+
+	private File createFileForTest() {
+		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\test.zip");
+		try {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+		} catch (IOException ex) {
+			Assert.fail("Not create file test!");
+		}
+
+		return file;
 	}
 }
