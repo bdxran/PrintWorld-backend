@@ -17,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/model")
@@ -98,10 +101,11 @@ public class ModelController {
 
 		String id = toolService.generateId();
 		String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, id);
+		List<String> imageIds = new ArrayList<>();
 		if (images.length > 0) {
-			toolService.uploadImages(images, id);
+			imageIds = toolService.uploadImages(images, id);
 		}
-		Model modelSave = modelService.createModel(id, pathFileTmp, file.getOriginalFilename(), model);
+		Model modelSave = modelService.createModel(id, pathFileTmp, file.getOriginalFilename(), imageIds, model);
 
 		log.info("New model is save");
 

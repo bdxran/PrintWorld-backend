@@ -69,8 +69,10 @@ public class ModelServiceImplTest {
 	@Test
 	public void getModelByIdTest() {
 		File file = createFileForTest();
+		List<String> imageIds = new ArrayList<>();
+		imageIds.add("m-20220113-000002.png");
 
-		Model saveModel = modelService.createModel(this.expectedModel.getId(), file.getAbsolutePath(), file.getName(), this.expectedModel);
+		Model saveModel = modelService.createModel(this.expectedModel.getId(), file.getAbsolutePath(), file.getName(), imageIds, this.expectedModel);
 
 		Model model = modelService.getModelById(this.expectedModel.getId());
 
@@ -80,14 +82,17 @@ public class ModelServiceImplTest {
 
 	@Test
 	public void getAllModelTest() {
+		List<String> imageIds = new ArrayList<>();
+		imageIds.add("m-20220113-000003.png");
+
 		File file = createFileForTest();
 		Model model1 = this.expectedModel;
-		Model saveModel1 = modelService.createModel(model1.getId(), file.getAbsolutePath(), file.getName(), model1);
+		Model saveModel1 = modelService.createModel(model1.getId(), file.getAbsolutePath(), file.getName(), imageIds, model1);
 
 		file = createFileForTest();
 		Model model2 = this.expectedModel;
 		model2.setId("m-20211224-000002");
-		Model saveModel2 = modelService.createModel(model2.getId(), file.getAbsolutePath(), file.getName(), model2);
+		Model saveModel2 = modelService.createModel(model2.getId(), file.getAbsolutePath(), file.getName(), imageIds, model2);
 
 		ListResponseDto<Model> modelsResponseDto = modelService.getAllModel(null, null);
 		List<Model> models = modelsResponseDto.getData();
@@ -99,14 +104,17 @@ public class ModelServiceImplTest {
 
 	@Test
 	public void getAllModelPageTest() {
+		List<String> imageIds = new ArrayList<>();
+		imageIds.add("m-20220113-000003.png");
+
 		File file = createFileForTest();
 		Model model1 = this.expectedModel;
-		Model saveModel1 = modelService.createModel(model1.getId(), file.getAbsolutePath(), file.getName(), model1);
+		Model saveModel1 = modelService.createModel(model1.getId(), file.getAbsolutePath(), file.getName(), imageIds, model1);
 
 		file = createFileForTest();
 		Model model2 = this.expectedModel;
 		model2.setId("m-20211224-000002");
-		Model saveModel2 = modelService.createModel(model2.getId(), file.getAbsolutePath(), file.getName(), model2);
+		Model saveModel2 = modelService.createModel(model2.getId(), file.getAbsolutePath(), file.getName(), imageIds, model2);
 
 		ListResponseDto<Model> modelsResponseDto = modelService.getAllModel(0, 10);
 		List<Model> models = modelsResponseDto.getData();
@@ -119,10 +127,12 @@ public class ModelServiceImplTest {
 	@Test
 	public void createModelTest() {
 		String id = toolService.generateId();
+		List<String> imageIds = new ArrayList<>();
+		imageIds.add("m-20220113-000003.png");
 
 		File file = createFileForTest();
 
-		Model saveModel = modelService.createModel(id, file.getAbsolutePath(), file.getName(), this.expectedModel);
+		Model saveModel = modelService.createModel(id, file.getAbsolutePath(), file.getName(), imageIds, this.expectedModel);
 
 		Assert.assertNotNull(saveModel);
 		Assert.assertEquals("Model save and model expected isn't equal", saveModel, this.expectedModel);

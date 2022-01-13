@@ -60,10 +60,11 @@ public class ModelServiceImpl implements ModelService {
 	 * @return new model save into DB
 	 */
 	@Override
-	public Model createModel(String id, String pathFileTmp, String nameFile, Model model) {
+	public Model createModel(String id, String pathFileTmp, String nameFile, List<String> imageIds, Model model) {
 		log.info("Save to new model into DB");
 		model.setId(id);
 		model.setNameFile(nameFile.replace(" ", "_"));
+		model.setImageIds(imageIds);
 
 		String filename = model.getId() + ".zip";
 		toolService.saveFile(filename, pathFileTmp, id);
