@@ -2,6 +2,7 @@ package com.rbl.printworld.services;
 
 import com.rbl.printworld.models.Model;
 import com.rbl.printworld.models.dto.ListResponseDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -11,9 +12,9 @@ public interface ModelService {
 
 	ListResponseDto<Model> getAllModel(Integer page, Integer limit);
 
-	Model createModel(String id, String pathFileTmp, String nameFile, List<String> imageIds, Model model);
+	Model createModel(MultipartFile file, MultipartFile[] images, String model);
 
-	Model modifyModel(String pathFileTmp, Model model);
+	Model modifyModel(MultipartFile file, MultipartFile[] images, String model);
 
 	boolean deleteModel(Model model);
 }

@@ -1,5 +1,6 @@
 package com.rbl.printworld.services.impl;
 
+import com.google.gson.Gson;
 import com.rbl.printworld.exceptions.ApplicationException;
 import com.rbl.printworld.models.Model;
 import com.rbl.printworld.models.PrintWorldProperties;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,16 +57,30 @@ public class ModelServiceImpl implements ModelService {
 	/**
 	 * Save upload file into the repertory data and new model into DB
 	 *
-	 * @param id
-	 * @param pathFileTmp
-	 * @param model
+	 * @param modelJson
 	 * @return new model save into DB
 	 */
 	@Override
-	public Model createModel(String id, String pathFileTmp, String nameFile, List<String> imageIds, Model model) {
-		log.info("Save to new model into DB");
+	public Model createModel(MultipartFile file, MultipartFile[] images, String modelJson) {
+		log.info("Call to create new model");
+		Gson gson = new Gson();
+		Model model = gson.fromJson(modelJson, Model.class);
+
+		toolService.getExtensionFile(model, file.getOriginalFilename());
+		if (!model.getExtension().equals("zip")) {
+			log.warn("File to send isn't zip, is : " + model.getExtension());
+			throw new ApplicationException("415", "File upload isn't zip!");
+		}
+
+		String id = toolService.generateId();
+		String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, id);
+		List<String> imageIds = new ArrayList<>();
+		if (images.length > 0) {
+			imageIds = toolService.uploadImages(images, id);
+		}
+
 		model.setId(id);
-		model.setNameFile(nameFile.replace(" ", "_"));
+		model.setNameFile(file.getName().replace(" ", "_"));
 		model.setImageIds(imageIds);
 
 		String filename = model.getId() + ".zip";
@@ -75,13 +92,29 @@ public class ModelServiceImpl implements ModelService {
 	/**
 	 * Modify upload file into the repertory and model into DB
 	 *
-	 * @param pathFileTmp
-	 * @param model
+	 * @param file
+	 * @param images
+	 * @param modelJson
 	 * @return model modified into DB
 	 */
 	@Override
-	public Model modifyModel(String pathFileTmp, Model model) {
-		log.info("Modify model into DB");
+	public Model modifyModel(MultipartFile file, MultipartFile[] images, String modelJson) {
+		log.info("Call to update model");
+		Gson gson = new Gson();
+		Model model = gson.fromJson(modelJson, Model.class);
+
+		toolService.getExtensionFile(model, file.getOriginalFilename());
+		if (!model.getExtension().equals("zip")) {
+			log.warn("File to send isn't zip, is : " + model.getExtension());
+			throw new ApplicationException("415", "File upload isn't zip!");
+		}
+
+		String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, model.getId());
+		if (images.length > 0) {
+			List<String> imageIds = toolService.uploadImages(images, model.getId());
+			model.setImageIds(imageIds);
+		}
+
 		String nameFile = model.getNameFile().replace(" ", "_");
 		model.setNameFile(nameFile);
 

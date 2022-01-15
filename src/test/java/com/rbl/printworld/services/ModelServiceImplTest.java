@@ -12,11 +12,18 @@ import org.mongounit.MongoUnitTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -25,14 +32,17 @@ import java.util.List;
 @Import({ModelServiceImpl.class, ToolServiceImpl.class})
 public class ModelServiceImplTest {
 
-	private final String[] expectedArrayIdModels = new String[]{"m-20211224-000001", "m-20211224-000002"};
+	private String pattern = "yyyyMMdd";
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+	private String date = simpleDateFormat.format(new Date());
+	private final String[] expectedArrayIdModels = new String[]{"m-" + date + "-000001", "m-" + date + "-000002"};
+	private final List<String> imageIds = Collections.singletonList("m-" + date + "-000002");
 	private final List<Integer> subCategoryIds = new ArrayList<>() {{
-		add((int) Math.random());
-		add((int) Math.random());
-		add((int) Math.random());
+		add(1);
+		add(2);
 	}};
 	private final Model expectedModel = Model.builder()
-			.id("m-20211224-000001")
+			.id("m-" + date + "-000001")
 			.name("testModel")
 			.description("blabla")
 			.nameFile("test")
@@ -40,21 +50,44 @@ public class ModelServiceImplTest {
 			.numberElement(1)
 			.note(5)
 			.size(1564489)
-			.categoryId((int) Math.random())
+			.categoryId(1)
 			.subCategoryIds(subCategoryIds)
+			.imageIds(imageIds)
 			.build();
 	private final Model expectedModifyModel = Model.builder()
-			.id("m-20211224-000001")
+			.id("m-" + date + "-000001")
 			.name("testModel2")
-			.description("blabla")
+			.description("plopplop")
 			.nameFile("test")
 			.extension("zip")
 			.numberElement(1)
 			.note(5)
 			.size(1564489)
-			.categoryId((int) Math.random())
+			.categoryId(1)
 			.subCategoryIds(subCategoryIds)
+			.imageIds(imageIds)
 			.build();
+	private final String expectedModelJson = "{\n" +
+			"    \"name\": \"testModel\",\n" +
+			"    \"description\": \"blabla\",\n" +
+			"    \"nameFile\": \"test\",\n" +
+			"    \"numberElement\": 1,\n" +
+			"    \"note\": 5,\n" +
+			"    \"size\": 1564489,\n" +
+			"    \"categoryId\": 1,\n" +
+			"    \"subCategoryIds\": [1, 2]\n" +
+			"}";
+	private final String expectedModifyModelJson = "{\n" +
+			"    \"id\": \"m-" + date + "-000001\",\n" +
+			"    \"name\": \"testModel2\",\n" +
+			"    \"description\": \"plopplop\",\n" +
+			"    \"nameFile\": \"test\",\n" +
+			"    \"numberElement\": 1,\n" +
+			"    \"note\": 5,\n" +
+			"    \"size\": 1564489,\n" +
+			"    \"categoryId\": 1,\n" +
+			"    \"subCategoryIds\": [1, 2]\n" +
+			"}";
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
 			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp")
 			.repositoryData("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data")
@@ -67,32 +100,33 @@ public class ModelServiceImplTest {
 	private ToolServiceImpl toolService;
 
 	@Test
-	public void getModelByIdTest() {
-		File file = createFileForTest();
-		List<String> imageIds = new ArrayList<>();
-		imageIds.add("m-20220113-000002.png");
+	public void getModelByIdTest() throws IOException {
+		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
+		MultipartFile multipartImageTest = createMultipartImageTest("testImage");
+		MultipartFile[] multipartImagesTest = new MultipartFile[]{multipartImageTest};
+		File fileTest = createFileForTest();
 
-		Model saveModel = modelService.createModel(this.expectedModel.getId(), file.getAbsolutePath(), file.getName(), imageIds, this.expectedModel);
+		Model saveModel = modelService.createModel(multipartFileTest, multipartImagesTest, this.expectedModelJson);
 
-		Model model = modelService.getModelById(this.expectedModel.getId());
+		Model model = modelService.getModelById(saveModel.getId());
 
 		Assert.assertNotNull(model);
 		Assert.assertEquals("Model get by id into db is equal from expected model", this.expectedModel, model);
 	}
 
 	@Test
-	public void getAllModelTest() {
-		List<String> imageIds = new ArrayList<>();
-		imageIds.add("m-20220113-000003.png");
+	public void getAllModelTest() throws IOException {
+		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
+		MultipartFile multipartImageTest = createMultipartImageTest("testImage");
+		MultipartFile[] multipartImagesTest = new MultipartFile[]{multipartImageTest};
 
 		File file = createFileForTest();
 		Model model1 = this.expectedModel;
-		Model saveModel1 = modelService.createModel(model1.getId(), file.getAbsolutePath(), file.getName(), imageIds, model1);
+		Model saveModel1 = modelService.createModel(multipartFileTest, multipartImagesTest, this.expectedModelJson);
 
 		file = createFileForTest();
 		Model model2 = this.expectedModel;
-		model2.setId("m-20211224-000002");
-		Model saveModel2 = modelService.createModel(model2.getId(), file.getAbsolutePath(), file.getName(), imageIds, model2);
+		Model saveModel2 = modelService.createModel(multipartFileTest, multipartImagesTest, this.expectedModelJson);
 
 		ListResponseDto<Model> modelsResponseDto = modelService.getAllModel(null, null);
 		List<Model> models = modelsResponseDto.getData();
@@ -103,18 +137,18 @@ public class ModelServiceImplTest {
 	}
 
 	@Test
-	public void getAllModelPageTest() {
-		List<String> imageIds = new ArrayList<>();
-		imageIds.add("m-20220113-000003.png");
+	public void getAllModelPageTest() throws IOException {
+		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
+		MultipartFile multipartImageTest = createMultipartImageTest("testImage");
+		MultipartFile[] multipartImagesTest = new MultipartFile[]{multipartImageTest};
 
 		File file = createFileForTest();
 		Model model1 = this.expectedModel;
-		Model saveModel1 = modelService.createModel(model1.getId(), file.getAbsolutePath(), file.getName(), imageIds, model1);
+		Model saveModel1 = modelService.createModel(multipartFileTest, multipartImagesTest, this.expectedModelJson);
 
 		file = createFileForTest();
 		Model model2 = this.expectedModel;
-		model2.setId("m-20211224-000002");
-		Model saveModel2 = modelService.createModel(model2.getId(), file.getAbsolutePath(), file.getName(), imageIds, model2);
+		Model saveModel2 = modelService.createModel(multipartFileTest, multipartImagesTest, this.expectedModelJson);
 
 		ListResponseDto<Model> modelsResponseDto = modelService.getAllModel(0, 10);
 		List<Model> models = modelsResponseDto.getData();
@@ -125,24 +159,25 @@ public class ModelServiceImplTest {
 	}
 
 	@Test
-	public void createModelTest() {
-		String id = toolService.generateId();
-		List<String> imageIds = new ArrayList<>();
-		imageIds.add("m-20220113-000003.png");
+	public void createModelTest() throws IOException {
+		MultipartFile multipartFileTest = createMultipartFileTest("test");
+		MultipartFile multipartImageTest = createMultipartImageTest("testImage");
+		MultipartFile[] multipartImagesTest = new MultipartFile[]{multipartImageTest};
 
-		File file = createFileForTest();
-
-		Model saveModel = modelService.createModel(id, file.getAbsolutePath(), file.getName(), imageIds, this.expectedModel);
+		Model saveModel = modelService.createModel(multipartFileTest, multipartImagesTest, this.expectedModelJson);
 
 		Assert.assertNotNull(saveModel);
 		Assert.assertEquals("Model save and model expected isn't equal", saveModel, this.expectedModel);
 	}
 
 	@Test
-	public void modifyModelTest() {
-		File file = createFileForTest();
+	public void modifyModelTest() throws IOException {
+		MultipartFile multipartFileTest = createMultipartFileTest("test");
+		MultipartFile multipartImageTest = createMultipartImageTest("testImage");
+		MultipartFile[] multipartImagesTest = new MultipartFile[]{multipartImageTest};
+		toolService.generateId();
 
-		Model saveModel = modelService.modifyModel(file.getAbsolutePath(), this.expectedModifyModel);
+		Model saveModel = modelService.modifyModel(multipartFileTest, multipartImagesTest, this.expectedModifyModelJson);
 
 		Assert.assertNotNull(saveModel);
 		Assert.assertEquals("Model save and model expected isn't equal", saveModel, this.expectedModifyModel);
@@ -167,5 +202,39 @@ public class ModelServiceImplTest {
 		}
 
 		return file;
+	}
+
+	private MultipartFile createMultipartFileTest(String name) throws IOException {
+		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + name + ".zip");
+		try {
+			imageTest.getParentFile().mkdirs();
+			imageTest.createNewFile();
+		} catch (IOException ex) {
+			Assert.fail("Not create file test!");
+		}
+
+		return new MockMultipartFile(
+				name,
+				name + ".zip",
+				MediaType.APPLICATION_OCTET_STREAM_VALUE,
+				new FileInputStream("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + name + ".zip")
+		);
+	}
+
+	private MultipartFile createMultipartImageTest(String name) throws IOException {
+		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + name + ".png");
+		try {
+			imageTest.getParentFile().mkdirs();
+			imageTest.createNewFile();
+		} catch (IOException ex) {
+			Assert.fail("Not create file test!");
+		}
+
+		return new MockMultipartFile(
+				name,
+				name + ".png",
+				MediaType.APPLICATION_OCTET_STREAM_VALUE,
+				new FileInputStream("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + name + ".png")
+		);
 	}
 }

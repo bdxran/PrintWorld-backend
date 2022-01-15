@@ -89,23 +89,7 @@ public class ModelController {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}
 
-		log.info("Call to create new model");
-		Gson gson = new Gson();
-		Model model = gson.fromJson(modelJson, Model.class);
-
-		toolService.getExtensionFile(model, file.getOriginalFilename());
-		if (!model.getExtension().equals("zip")) {
-			log.warn("File to send isn't zip, is : " + model.getExtension());
-			throw new ApplicationException("415", "File upload isn't zip!");
-		}
-
-		String id = toolService.generateId();
-		String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, id);
-		List<String> imageIds = new ArrayList<>();
-		if (images.length > 0) {
-			imageIds = toolService.uploadImages(images, id);
-		}
-		Model modelSave = modelService.createModel(id, pathFileTmp, file.getOriginalFilename(), imageIds, model);
+		Model modelSave = modelService.createModel(file, images, modelJson);
 
 		log.info("New model is save");
 
@@ -125,23 +109,12 @@ public class ModelController {
 	 * @RequestBody model
 	 */
 	@PostMapping(value = "/modify", consumes = "multipart/form-data")
-	public ResponseEntity<Object> modifyModel(@RequestParam("file") MultipartFile multipartFile, @RequestParam("model") String modelJson) {
+	public ResponseEntity<Object> modifyModel(@RequestParam("file") MultipartFile multipartFile, @RequestParam("images") MultipartFile[] images, @RequestParam("model") String modelJson) {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}
 
-		log.info("Call to update model");
-		Gson gson = new Gson();
-		Model model = gson.fromJson(modelJson, Model.class);
-
-		toolService.getExtensionFile(model, multipartFile.getOriginalFilename());
-		if (!model.getExtension().equals("zip")) {
-			log.warn("File to send isn't zip, is : " + model.getExtension());
-			throw new ApplicationException("415", "File upload isn't zip!");
-		}
-
-		String pathFileTmp = toolService.transferMultipartFileToFileTmp(multipartFile, model.getId());
-		Model modelSave = modelService.modifyModel(pathFileTmp, model);
+		Model modelSave = modelService.modifyModel(multipartFile, images, modelJson);
 
 		log.info("Model is upload");
 
