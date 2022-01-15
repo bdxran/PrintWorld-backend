@@ -1,10 +1,8 @@
 package com.rbl.printworld.services.impl;
 
 import com.rbl.printworld.exceptions.ApplicationException;
-import com.rbl.printworld.models.Image;
 import com.rbl.printworld.models.Model;
 import com.rbl.printworld.models.PrintWorldProperties;
-import com.rbl.printworld.services.ImageService;
 import com.rbl.printworld.services.ToolService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,16 +29,14 @@ public class ToolServiceImpl implements ToolService {
 			"N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
 	private final PrintWorldProperties properties;
-	private final ImageService imageService;
 
 	@Autowired
-	public ToolServiceImpl(PrintWorldProperties properties, ImageService imageService) {
+	public ToolServiceImpl(PrintWorldProperties properties) {
 		this.properties = properties;
-		this.imageService = imageService;
 	}
 
 	/**
-	 * The transfer contains upload file to tmp file
+	 * The transfer contains upload file to tmp repository
 	 *
 	 * @param multipartFile
 	 * @param id
@@ -53,6 +47,26 @@ public class ToolServiceImpl implements ToolService {
 		log.info("Transfer multipartFile to file : " + multipartFile.getOriginalFilename());
 		try {
 			File file = new File(this.properties.getTmp() + File.separator + "tmp_" + id + ".zip");
+
+			multipartFile.transferTo(file);
+
+			return file.getAbsolutePath();
+		} catch (IOException ex) {
+			throw new ApplicationException("500", "Error when transfer multipartFile to file!");
+		}
+	}
+
+	/**
+	 * The transfer contains upload image to tmp repository
+	 *
+	 * @param multipartFile
+	 * @return path tmp file
+	 */
+	@Override
+	public String transferMultipartFileToImageTmp(MultipartFile multipartFile) {
+		log.info("Transfer multipartFile to file : " + multipartFile.getOriginalFilename());
+		try {
+			File file = new File(this.properties.getTmp() + File.separator + "tmp_" + multipartFile.getOriginalFilename());
 
 			multipartFile.transferTo(file);
 
@@ -146,44 +160,6 @@ public class ToolServiceImpl implements ToolService {
 		}
 
 		return path + File.separator + filename;
-	}
-
-	/**
-	 * Allow save images
-	 *
-	 * @param images
-	 * @param id
-	 * @return a list image id
-	 */
-	public List<String> uploadImages(MultipartFile[] images, String id) {
-		log.info("Upload images");
-		List<String> imageIds = new ArrayList<>();
-
-		try {
-			for (MultipartFile imageFile : images) {
-				String filename = imageFile.getOriginalFilename();
-				Image image =  Image.builder()
-						.id(generateId())
-						.name(filename)
-						.extension(filename.substring(filename.lastIndexOf(".") + 1))
-						.modelId(id)
-						.build();
-
-				log.info("Transfer multipartFile to file : " + image.getName());
-
-				File file = new File(this.properties.getTmp() + File.separator + image.getId() + "." + image.getExtension());
-				imageFile.transferTo(file);
-
-				imageService.addImage(image);
-				saveFile(file.getName(), file.getAbsolutePath(), id);
-
-				imageIds.add(image.getId());
-			}
-		} catch (IOException ex) {
-			throw new ApplicationException("500", "Error when transfer multipartFile to file!");
-		}
-
-		return imageIds;
 	}
 
 	/**

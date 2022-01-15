@@ -7,6 +7,7 @@ import com.rbl.printworld.models.PrintWorldProperties;
 import com.rbl.printworld.models.dto.ListResponseDto;
 import com.rbl.printworld.models.enums.RequestStatus;
 import com.rbl.printworld.repositories.ModelRepository;
+import com.rbl.printworld.services.ImageService;
 import com.rbl.printworld.services.ModelService;
 import com.rbl.printworld.services.ToolService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +27,15 @@ public class ModelServiceImpl implements ModelService {
 	private final ToolService toolService;
 	private final ModelRepository modelRepository;
 	private final PrintWorldProperties properties;
+	private final ImageService imageService;
 
 	@Autowired
 	public ModelServiceImpl(ToolService toolService, ModelRepository modelRepository,
-	                        PrintWorldProperties properties) {
+	                        PrintWorldProperties properties, ImageService imageService) {
 		this.toolService = toolService;
 		this.modelRepository = modelRepository;
 		this.properties = properties;
+		this.imageService = imageService;
 	}
 
 	@Override
@@ -61,7 +64,7 @@ public class ModelServiceImpl implements ModelService {
 	 * @return new model save into DB
 	 */
 	@Override
-	public Model createModel(MultipartFile file, MultipartFile[] images, String modelJson) {
+	public Model createModel(MultipartFile file, String[] images, String modelJson) {
 		log.info("Call to create new model");
 		Gson gson = new Gson();
 		Model model = gson.fromJson(modelJson, Model.class);
@@ -75,8 +78,8 @@ public class ModelServiceImpl implements ModelService {
 		String id = toolService.generateId();
 		String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, id);
 		List<String> imageIds = new ArrayList<>();
-		if (images.length > 0) {
-			imageIds = toolService.uploadImages(images, id);
+		for (int i = 0; i < images.length; i++) {
+			imageIds.add(imageService.addImage(images[i], id));
 		}
 
 		model.setId(id);
@@ -98,28 +101,38 @@ public class ModelServiceImpl implements ModelService {
 	 * @return model modified into DB
 	 */
 	@Override
-	public Model modifyModel(MultipartFile file, MultipartFile[] images, String modelJson) {
+	public Model modifyModel(MultipartFile file, String[] images, String modelJson) {
 		log.info("Call to update model");
 		Gson gson = new Gson();
-		Model model = gson.fromJson(modelJson, Model.class);
+		Model modelModify = gson.fromJson(modelJson, Model.class);
+		Model model = getModelById(modelModify.getId());
 
-		toolService.getExtensionFile(model, file.getOriginalFilename());
-		if (!model.getExtension().equals("zip")) {
-			log.warn("File to send isn't zip, is : " + model.getExtension());
-			throw new ApplicationException("415", "File upload isn't zip!");
+		if (file != null) {
+			toolService.getExtensionFile(model, file.getOriginalFilename());
+			if (!model.getExtension().equals("zip")) {
+				log.warn("File to send isn't zip, is : " + model.getExtension());
+				throw new ApplicationException("415", "File upload isn't zip!");
+			}
+			String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, model.getId());
+			String nameFile = model.getNameFile().replace(" ", "_");
+			model.setNameFile(nameFile);
+			String filename = model.getId() + ".zip";
+			toolService.saveFile(filename, pathFileTmp, model.getId());
 		}
 
-		String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, model.getId());
-		if (images.length > 0) {
-			List<String> imageIds = toolService.uploadImages(images, model.getId());
+		if (images != null) {
+			List<String> imageIds = model.getImageIds();
+			for (int i = 0; i < images.length; i++) {
+				imageIds.add(imageService.addImage(images[i], model.getId()));
+			}
 			model.setImageIds(imageIds);
 		}
 
-		String nameFile = model.getNameFile().replace(" ", "_");
-		model.setNameFile(nameFile);
-
-		String filename = model.getId() + ".zip";
-		toolService.saveFile(filename, pathFileTmp, model.getId());
+		model.setName(modelModify.getName());
+		model.setDescription(modelModify.getDescription());
+		model.setNote(modelModify.getNote());
+		model.setCategoryId(modelModify.getCategoryId());
+		model.setSubCategoryIds(modelModify.getSubCategoryIds());
 
 		return modelRepository.save(model);
 	}

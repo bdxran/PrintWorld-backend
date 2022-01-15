@@ -17,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/model")
@@ -84,7 +81,7 @@ public class ModelController {
 	 * @RequestBody model
 	 */
 	@PostMapping(value = "/create", consumes = "multipart/form-data")
-	public ResponseEntity<?> createModel(@RequestParam("file") MultipartFile file, @RequestParam("images") MultipartFile[] images, @RequestParam("model") String modelJson) {
+	public ResponseEntity<?> createModel(@RequestParam("file") MultipartFile file, @RequestParam("images") String[] images, @RequestParam("model") String modelJson) {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}
@@ -109,7 +106,7 @@ public class ModelController {
 	 * @RequestBody model
 	 */
 	@PostMapping(value = "/modify", consumes = "multipart/form-data")
-	public ResponseEntity<Object> modifyModel(@RequestParam("file") MultipartFile multipartFile, @RequestParam("images") MultipartFile[] images, @RequestParam("model") String modelJson) {
+	public ResponseEntity<Object> modifyModel(@RequestParam("file") MultipartFile multipartFile, @RequestParam("images") String[] images, @RequestParam("model") String modelJson) {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}

@@ -1,8 +1,10 @@
 package com.rbl.printworld.services;
 
-import com.rbl.printworld.models.Image;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {
 
-	void addImage(Image image);
+	String addImage(String imageNameFile, String modelId);
+
+	String uploadImage(MultipartFile image);
 }
