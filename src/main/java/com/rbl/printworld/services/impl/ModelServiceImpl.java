@@ -78,8 +78,9 @@ public class ModelServiceImpl implements ModelService {
 		String id = toolService.generateId();
 		String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, id);
 		List<String> imageIds = new ArrayList<>();
-		for (int i = 0; i < images.length; i++) {
-			imageIds.add(imageService.addImage(images[i], id));
+		for (String image : images) {
+			log.info("Treat image : " + image);
+			imageIds.add(imageService.addImage(image, id));
 		}
 
 		model.setId(id);

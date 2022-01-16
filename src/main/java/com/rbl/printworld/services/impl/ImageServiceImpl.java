@@ -32,12 +32,18 @@ public class ImageServiceImpl implements ImageService {
 		this.properties = properties;
 	}
 
-	public void getImageById(){
-		//TODO
+	public Image getImageById(String id){
+		log.info("Search image by id : " + id);
+
+		return imageRepository.findById(id).orElseThrow(
+				() -> new ApplicationException("404", "Image with id " + id + " not found!"));
 	}
 
-	public void getImagesByModelId(){
-		//TODO
+	public List<Image> getImagesByModelId(String modelId){
+		log.info("Search images by model id : " + modelId);
+
+		return imageRepository.findByModelId(modelId).orElseThrow(
+				() -> new ApplicationException("404", "Images with model id " + modelId + " not found!"));
 	}
 
 	/**
@@ -82,9 +88,7 @@ public class ImageServiceImpl implements ImageService {
 	public String uploadImage(MultipartFile image) {
 		log.info("Upload image to tmp directory");
 
-		String pathFileTmp = toolService.transferMultipartFileToImageTmp(image);
-
-		return pathFileTmp;
+		return toolService.transferMultipartFileToImageTmp(image);
 	}
 
 	public void deleteImage() {

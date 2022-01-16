@@ -70,7 +70,7 @@ public class ToolServiceImpl implements ToolService {
 
 			multipartFile.transferTo(file);
 
-			return file.getAbsolutePath();
+			return file.getName();
 		} catch (IOException ex) {
 			throw new ApplicationException("500", "Error when transfer multipartFile to file!");
 		}

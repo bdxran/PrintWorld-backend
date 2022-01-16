@@ -5,6 +5,7 @@ import com.rbl.printworld.models.PrintWorldProperties;
 import com.rbl.printworld.models.dto.ListResponseDto;
 import com.rbl.printworld.services.impl.ModelServiceImpl;
 import com.rbl.printworld.services.impl.ToolServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +28,7 @@ import java.util.*;
 @MongoUnitTest
 @RunWith(SpringRunner.class)
 @Import({ModelServiceImpl.class, ToolServiceImpl.class})
+@Slf4j
 public class ModelServiceImplTest {
 
 	private String pattern = "yyyyMMdd";
