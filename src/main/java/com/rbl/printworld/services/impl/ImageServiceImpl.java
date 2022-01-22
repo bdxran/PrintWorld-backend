@@ -54,9 +54,10 @@ public class ImageServiceImpl implements ImageService {
 	 * @return name image tmp
 	 */
 	public String addImage(String imageNameFile, String modelId) {
-		log.info("Save a new image");
+		log.info("Save a new image : " + imageNameFile);
 
-		String imageTmpPath = this.properties.getTmp() + File.separator + imageNameFile;
+		String imageTmp = "tmp_" + imageNameFile;
+		String imageTmpPath = this.properties.getTmp() + File.separator + imageTmp;
 		String extension = imageNameFile.substring(imageNameFile.lastIndexOf(".") + 1);
 		String imageId = toolService.generateId();
 		String imageName = imageNameFile.substring(0, imageNameFile.lastIndexOf("."));

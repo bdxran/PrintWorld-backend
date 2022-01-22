@@ -106,7 +106,9 @@ public class ModelController {
 	 * @RequestBody model
 	 */
 	@PostMapping(value = "/modify", consumes = "multipart/form-data")
-	public ResponseEntity<Object> modifyModel(@RequestParam("file") MultipartFile multipartFile, @RequestParam("images") String[] images, @RequestParam("model") String modelJson) {
+	public ResponseEntity<Object> modifyModel(@RequestParam(name = "file", required = false) MultipartFile multipartFile,
+	                                          @RequestParam(name = "images", required = false) String[] images,
+	                                          @RequestParam("model") String modelJson) {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}

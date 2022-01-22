@@ -109,13 +109,14 @@ public class ModelServiceImpl implements ModelService {
 		Model model = getModelById(modelModify.getId());
 
 		if (file != null) {
+			log.info("Change model file by : " + file.getOriginalFilename());
 			toolService.getExtensionFile(model, file.getOriginalFilename());
 			if (!model.getExtension().equals("zip")) {
 				log.warn("File to send isn't zip, is : " + model.getExtension());
 				throw new ApplicationException("415", "File upload isn't zip!");
 			}
 			String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, model.getId());
-			String nameFile = model.getNameFile().replace(" ", "_");
+			String nameFile = file.getOriginalFilename().replace(" ", "_");
 			model.setNameFile(nameFile);
 			String filename = model.getId() + ".zip";
 			toolService.saveFile(filename, pathFileTmp, model.getId());
