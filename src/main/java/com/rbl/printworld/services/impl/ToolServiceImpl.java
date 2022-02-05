@@ -27,7 +27,6 @@ public class ToolServiceImpl implements ToolService {
 	private int metaCounter;
 	private final String[] base32 = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M",
 			"N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-
 	private final PrintWorldProperties properties;
 
 	@Autowired
@@ -144,6 +143,7 @@ public class ToolServiceImpl implements ToolService {
 	 * @param filename
 	 * @return path for save file
 	 */
+	@Override
 	public String getPathFile(String filename, String id) {
 		String year = id.substring(2, 6);
 		String month = id.substring(6, 8);
@@ -160,6 +160,12 @@ public class ToolServiceImpl implements ToolService {
 		}
 
 		return path + File.separator + filename;
+	}
+
+	@Override
+	public byte[] downloadFile(String id, String extension) {
+		//todo
+		return null;
 	}
 
 	/**

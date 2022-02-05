@@ -125,6 +125,7 @@ public class ModelServiceImpl implements ModelService {
 		if (images != null) {
 			List<String> imageIds = model.getImageIds();
 			for (int i = 0; i < images.length; i++) {
+				log.info(images[i]);
 				imageIds.add(imageService.addImage(images[i], model.getId()));
 			}
 			model.setImageIds(imageIds);
@@ -154,5 +155,20 @@ public class ModelServiceImpl implements ModelService {
 		toolService.deleteFile(pathFile);
 
 		return true;
+	}
+
+	@Override
+	public boolean removeIdImage(String id, String idImage) {
+		Model model = getModelById(id);
+
+		List<String> imageIds = model.getImageIds();
+		boolean check = imageIds.remove(idImage);
+
+		if (check)
+			model.setImageIds(imageIds);
+
+		modelRepository.save(model);
+
+		return check;
 	}
 }

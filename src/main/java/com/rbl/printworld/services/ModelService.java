@@ -15,4 +15,6 @@ public interface ModelService {
 	Model modifyModel(MultipartFile file, String[] images, String model);
 
 	boolean deleteModel(Model model);
+
+	boolean removeIdImage(String id, String idImage);
 }

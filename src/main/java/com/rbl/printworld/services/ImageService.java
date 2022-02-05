@@ -3,6 +3,7 @@ package com.rbl.printworld.services;
 import com.rbl.printworld.models.Image;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public interface ImageService {
@@ -14,4 +15,8 @@ public interface ImageService {
 	String addImage(String imageNameFile, String modelId);
 
 	String uploadImage(MultipartFile image);
+
+	Path downloadImage(String image);
+
+	boolean deleteImage(Image image);
 }
