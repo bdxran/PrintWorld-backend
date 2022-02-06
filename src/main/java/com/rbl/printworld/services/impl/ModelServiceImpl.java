@@ -94,8 +94,8 @@ public class ModelServiceImpl implements ModelService {
 		model.setNameFile(filename.replace(" ", "_"));
 		model.setImageIds(imageIds);
 
-		String filename = model.getId() + ".zip";
-		toolService.saveFile(filename, pathFileTmp, id);
+		String filenameSave = model.getId() + ".zip";
+		toolService.saveFile(filenameSave, pathFileTmp, id);
 
 		return modelRepository.save(model);
 	}
