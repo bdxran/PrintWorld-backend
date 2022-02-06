@@ -12,11 +12,17 @@ import com.rbl.printworld.services.ModelService;
 import com.rbl.printworld.services.ToolService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +75,7 @@ public class ModelServiceImpl implements ModelService {
 		Gson gson = new Gson();
 		Model model = gson.fromJson(modelJson, Model.class);
 
+		String filename = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
 		toolService.getExtensionFile(model, file.getOriginalFilename());
 		if (!model.getExtension().equals("zip")) {
 			log.warn("File to send isn't zip, is : " + model.getExtension());
@@ -84,7 +91,7 @@ public class ModelServiceImpl implements ModelService {
 		}
 
 		model.setId(id);
-		model.setNameFile(file.getName().replace(" ", "_"));
+		model.setNameFile(filename.replace(" ", "_"));
 		model.setImageIds(imageIds);
 
 		String filename = model.getId() + ".zip";
@@ -170,5 +177,29 @@ public class ModelServiceImpl implements ModelService {
 		modelRepository.save(model);
 
 		return check;
+	}
+
+	@Override
+	public Resource downloadModel(String id) {
+		log.info("Download model with id : " + id);
+		Model model = getModelById(id);
+		String filename = id + "." + model.getExtension();
+
+		String pathModel = toolService.getPathFile(filename, id);
+		pathModel = pathModel.substring(0, pathModel.lastIndexOf(File.separator));
+
+		try {
+			log.info("Retrieve zip model with path : " + pathModel + " and with filename : " + filename);
+			Path file = Paths.get(pathModel).resolve(filename);
+			Resource resource = new UrlResource(file.toUri());
+
+			if (resource.exists() || resource.isReadable()) {
+				return resource;
+			} else {
+				throw new ApplicationException("500", "Could not read the file : " + filename);
+			}
+		} catch (MalformedURLException ex) {
+			throw new ApplicationException("500", "Error: " + ex.getMessage());
+		}
 	}
 }

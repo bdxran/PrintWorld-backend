@@ -162,12 +162,6 @@ public class ToolServiceImpl implements ToolService {
 		return path + File.separator + filename;
 	}
 
-	@Override
-	public byte[] downloadFile(String id, String extension) {
-		//todo
-		return null;
-	}
-
 	/**
 	 * Copy only file. Don't use for folder because copy folder without content
 	 *

@@ -19,6 +19,4 @@ public interface ToolService {
 	String generateId();
 
 	String getPathFile(String filename, String id);
-
-	byte[] downloadFile(String id, String extension);
 }
