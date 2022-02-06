@@ -19,4 +19,6 @@ public interface ToolService {
 	String generateId();
 
 	String getPathFile(String filename, String id);
+
+	boolean saveMetaCounter();
 }
