@@ -124,6 +124,7 @@ public class ModelServiceImpl implements ModelService {
 			}
 			String pathFileTmp = toolService.transferMultipartFileToFileTmp(file, model.getId());
 			String nameFile = file.getOriginalFilename().replace(" ", "_");
+			nameFile = nameFile.substring(0, nameFile.lastIndexOf("."));
 			model.setNameFile(nameFile);
 			String filename = model.getId() + ".zip";
 			toolService.saveFile(filename, pathFileTmp, model.getId());

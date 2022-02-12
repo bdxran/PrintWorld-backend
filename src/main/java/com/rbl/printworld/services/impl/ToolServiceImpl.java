@@ -181,6 +181,18 @@ public class ToolServiceImpl implements ToolService {
 	}
 
 	/**
+	 * Allow set value MetaCounter
+	 */
+	public void setMetaCounter(int value) {
+		if (properties.getEnvironment().equals("test")) {
+			log.info("Set metaCounter");
+			this.metaCounter = value;
+		} else {
+			throw new ApplicationException("400", "Not call setMetaCounter with environment : " + properties.getEnvironment());
+		}
+	}
+
+	/**
 	 * Copy only file. Don't use for folder because copy folder without content
 	 *
 	 * @param filename

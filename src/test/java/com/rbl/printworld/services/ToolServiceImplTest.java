@@ -32,6 +32,9 @@ public class ToolServiceImplTest {
 	private String pattern = "yyyyMMdd";
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 	private String date = simpleDateFormat.format(new Date());
+	private String year = date.substring(0, 4);
+	private String month = date.substring(4, 6);
+	private String day = date.substring(6, 8);
 	private final Model expectedModel = Model.builder()
 			.id("m-" + date + "-000001")
 			.name("testModel")
@@ -44,8 +47,9 @@ public class ToolServiceImplTest {
 			.build();
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
 			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp")
-			.repositoryData("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data")
-			.metaCounter("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\configs\\metaCounter.txt")
+			.repositoryData("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data")
+			.metaCounter("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/configs/metaCounter.txt")
+			.environment("test")
 			.build();
 
 	@Autowired
@@ -53,7 +57,7 @@ public class ToolServiceImplTest {
 
 	@Test
 	public void transferMultipartFileToFileTmpTest() throws IOException {
-		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\test.zip");
+		File file = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.zip");
 		try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();
@@ -65,7 +69,7 @@ public class ToolServiceImplTest {
 				"name",
 				"test.zip",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\test.zip")
+				new FileInputStream("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.zip")
 		);
 
 		String pathFileTmp = toolService.transferMultipartFileToFileTmp(multipartFile, "m-" + date + "-000001");
@@ -131,8 +135,8 @@ public class ToolServiceImplTest {
 
 	@Test
 	public void getPathFileTest() {
-		String filename = "m-20211224-000001.zip";
-		String pathFileExpected = "C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\2021\\12\\24\\01\\m-20211224-000001.zip";
+		String filename = "m-" + date + "-000001.zip";
+		String pathFileExpected = "C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + year + "\\" + month + "\\" + day + "\\01\\m-" + date + "-000001.zip";
 
 		String pathFile = toolService.getPathFile(filename, "m-" + date + "-000001");
 
@@ -142,7 +146,7 @@ public class ToolServiceImplTest {
 
 
 	private File createFileForTest() {
-		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\test.zip");
+		File file = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.zip");
 		try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();

@@ -21,4 +21,6 @@ public interface ToolService {
 	String getPathFile(String filename, String id);
 
 	boolean saveMetaCounter();
+
+	void setMetaCounter(int value);
 }

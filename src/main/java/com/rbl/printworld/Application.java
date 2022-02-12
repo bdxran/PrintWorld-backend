@@ -40,6 +40,7 @@ public class Application implements CommandLineRunner {
 		log.info("Repository for tmp is : " + properties.getTmp());
 		log.info("Repository for data is : " + properties.getRepositoryData());
 		log.info("File metaCounter is : " + properties.getMetaCounter());
+		log.info("Environment app is : " + properties.getEnvironment());
 	}
 
 	public static void shutdown() {

@@ -89,9 +89,10 @@ public class ModelServiceImplTest {
 			"    \"subCategoryIds\": [1, 2]\n" +
 			"}";
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
-			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp")
-			.repositoryData("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data")
-			.metaCounter("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\configs\\metaCounter.txt")
+			.tmp("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp")
+			.repositoryData("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data")
+			.metaCounter("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/configs/metaCounter.txt")
+			.environment("test")
 			.build();
 
 	@Autowired
@@ -101,15 +102,16 @@ public class ModelServiceImplTest {
 
 	@Test
 	public void getModelByIdTest() throws IOException {
+		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp\\testImage.png");
+		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
 		} catch (IOException ex) {
 			Assert.fail("Not create file test!");
 		}
-		String[] images = new String[]{imageTest.getName()};
+		String[] images = new String[]{"testImage.png"};
 		File fileTest = createFileForTest();
 
 		Model saveModel = modelService.createModel(multipartFileTest, images, this.expectedModelJson);
@@ -122,28 +124,29 @@ public class ModelServiceImplTest {
 
 	@Test
 	public void getAllModelTest() throws IOException {
+		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp\\testImage.png");
+		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
 		} catch (IOException ex) {
 			Assert.fail("Not create file test!");
 		}
-		String[] images = new String[]{imageTest.getName()};
+		String[] images = new String[]{"testImage.png"};
 
 		File file = createFileForTest();
 		Model model1 = this.expectedModel;
 		Model saveModel1 = modelService.createModel(multipartFileTest, images, this.expectedModelJson);
 
-		File imageTest2 = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp\\testImage.png");
+		File imageTest2 = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
 		try {
 			imageTest2.getParentFile().mkdirs();
 			imageTest2.createNewFile();
 		} catch (IOException ex) {
 			Assert.fail("Not create file test!");
 		}
-		String[] images2 = new String[]{imageTest2.getName()};
+		String[] images2 = new String[]{"testImage.png"};
 
 		file = createFileForTest();
 		Model model2 = this.expectedModel;
@@ -151,7 +154,7 @@ public class ModelServiceImplTest {
 
 		ListResponseDto<Model> modelsResponseDto = modelService.getAllModel(null, null);
 		List<Model> models = modelsResponseDto.getData();
-		String[] arrayIdModels = new String[]{models.get(0).getId(), models.get(1).getId()};
+		String[] arrayIdModels = new String[]{models.get(1).getId(), models.get(0).getId()};
 
 		Assert.assertNotNull(models);
 		Assert.assertArrayEquals("Models into db were not equal from expected models", this.expectedArrayIdModels, arrayIdModels);
@@ -159,28 +162,29 @@ public class ModelServiceImplTest {
 
 	@Test
 	public void getAllModelPageTest() throws IOException {
+		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp\\testImage.png");
+		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
 		} catch (IOException ex) {
 			Assert.fail("Not create file test!");
 		}
-		String[] images = new String[]{imageTest.getName()};
+		String[] images = new String[]{"testImage.png"};
 
 		File file = createFileForTest();
 		Model model1 = this.expectedModel;
 		Model saveModel1 = modelService.createModel(multipartFileTest, images, this.expectedModelJson);
 
-		File imageTest2 = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp\\testImage.png");
+		File imageTest2 = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
 		try {
 			imageTest2.getParentFile().mkdirs();
 			imageTest2.createNewFile();
 		} catch (IOException ex) {
 			Assert.fail("Not create file test!");
 		}
-		String[] images2 = new String[]{imageTest2.getName()};
+		String[] images2 = new String[]{"testImage.png"};
 
 		file = createFileForTest();
 		Model model2 = this.expectedModel;
@@ -196,51 +200,54 @@ public class ModelServiceImplTest {
 
 	@Test
 	public void createModelTest() throws IOException {
+		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp\\testImage.png");
+		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
 		} catch (IOException ex) {
 			Assert.fail("Not create file test!");
 		}
-		String[] images = new String[]{imageTest.getName()};
+		String[] images = new String[]{"testImage.png"};
 
 		Model saveModel = modelService.createModel(multipartFileTest, images, this.expectedModelJson);
 
 		Assert.assertNotNull(saveModel);
-		Assert.assertEquals("Model save and model expected isn't equal", saveModel, this.expectedModel);
+		Assert.assertEquals("Model save and model expected isn't equal", this.expectedModel, saveModel);
 	}
 
 	@Test
 	public void modifyModelTest() throws IOException {
+		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp\\testImage.png");
+		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
 		} catch (IOException ex) {
 			Assert.fail("Not create file test!");
 		}
-		String[] images = new String[]{imageTest.getName()};
+		String[] images = new String[]{"testImage.png"};
 		Model model = modelService.createModel(multipartFileTest, images, this.expectedModelJson);
 
-		File imageTest2 = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp\\testImage.png");
+		File imageTest2 = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
 		try {
 			imageTest2.getParentFile().mkdirs();
 			imageTest2.createNewFile();
 		} catch (IOException ex) {
 			Assert.fail("Not create file test!");
 		}
-		String[] images2 = new String[]{imageTest2.getName()};
+		String[] images2 = new String[]{"testImage.png"};
 		Model saveModel = modelService.modifyModel(multipartFileTest, images2, this.expectedModifyModelJson);
 
 		Assert.assertNotNull(saveModel);
-		Assert.assertEquals("Model save and model expected isn't equal", saveModel, this.expectedModifyModel);
+		Assert.assertEquals("Model save and model expected isn't equal", this.expectedModifyModel, saveModel);
 	}
 
 	@Test
 	public void deleteModelTest() {
+		toolService.setMetaCounter(1);
 		createFileForTest();
 
 		boolean checkDeleteModel = modelService.deleteModel(this.expectedModel);
@@ -249,7 +256,7 @@ public class ModelServiceImplTest {
 	}
 
 	private File createFileForTest() {
-		File file = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\2021\\12\\24\\01\\m-20211224-000001.zip");
+		File file = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/2021/12/24/01/m-20211224-000001.zip");
 		try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();
@@ -261,7 +268,7 @@ public class ModelServiceImplTest {
 	}
 
 	private MultipartFile createMultipartFileTest(String name) throws IOException {
-		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + name + ".zip");
+		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/" + name + ".zip");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -273,12 +280,12 @@ public class ModelServiceImplTest {
 				name,
 				name + ".zip",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + name + ".zip")
+				new FileInputStream("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/" + name + ".zip")
 		);
 	}
 
 	private MultipartFile createMultipartImageTest(String name) throws IOException {
-		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + name + ".png");
+		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/" + name + ".png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -290,7 +297,7 @@ public class ModelServiceImplTest {
 				name,
 				name + ".png",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + name + ".png")
+				new FileInputStream("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/" + name + ".png")
 		);
 	}
 }

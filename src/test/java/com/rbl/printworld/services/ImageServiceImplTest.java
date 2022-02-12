@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -43,18 +42,18 @@ public class ImageServiceImplTest {
 	private String date = simpleDateFormat.format(new Date());
 
 	private final Image imageExpected = Image.builder()
-			.id("m-" + date + "-0000002")
+			.id("m-" + date + "-000002")
 			.name("test")
 			.extension("png")
-			.modelId("m-" + date + "-0000001")
+			.modelId("m-" + date + "-000001")
 			.build();
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
-			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp")
-			.repositoryData("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data")
-			.metaCounter("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\configs\\metaCounter.txt")
+			.tmp("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp")
+			.repositoryData("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data")
+			.metaCounter("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/configs/metaCounter.txt")
+			.environment("test")
 			.build();
 
-	//TODO not work
 	@Test
 	public void getImageByIdTest() {
 		addImageTest();
@@ -65,7 +64,6 @@ public class ImageServiceImplTest {
 		Assert.assertEquals("Image isn't equals with image expected!", imageExpected, image);
 	}
 
-	//TODO not work
 	@Test
 	public void getImageByModelIdTest() {
 		addImageTest();
@@ -79,10 +77,11 @@ public class ImageServiceImplTest {
 
 	@Test
 	public void addImageTest() {
+		toolService.setMetaCounter(1);
 		String modelId = toolService.generateId();
-		String imageName = "tmp_test.png";
+		String imageName = "test.png";
 
-		File imageTest = new File(printWorldProperties.getTmp() + File.separator + imageName);
+		File imageTest = new File(printWorldProperties.getTmp() + File.separator + "tmp_" + imageName);
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -103,7 +102,8 @@ public class ImageServiceImplTest {
 
 	@Test
 	public void uploadImageTest() throws IOException {
-		File imageTest = new File("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\test.png");
+		toolService.setMetaCounter(1);
+		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -115,14 +115,14 @@ public class ImageServiceImplTest {
 				"test",
 				"test.png",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\test.png")
+				new FileInputStream("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.png")
 		);
 
 		String imageTmpTest = imageService.uploadImage(multipartFile);
 
 		Assert.assertNotNull("Path tmp image is null!", imageTmpTest);
 
-		File fileTest = new File(imageTmpTest);
+		File fileTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/" + imageTmpTest);
 		if (!fileTest.exists()) {
 			Assert.fail("Test not pass because image " + imageTmpTest + " isn't create!");
 		}
