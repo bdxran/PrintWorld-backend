@@ -46,9 +46,9 @@ public class ToolServiceImplTest {
 			.size(1564489)
 			.build();
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
-			.tmp("C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\tmp")
-			.repositoryData("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data")
-			.metaCounter("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/configs/metaCounter.txt")
+			.tmp("tmp")
+			.repositoryData("data")
+			.metaCounter("configs/metaCounter.txt")
 			.environment("test")
 			.build();
 
@@ -57,7 +57,7 @@ public class ToolServiceImplTest {
 
 	@Test
 	public void transferMultipartFileToFileTmpTest() throws IOException {
-		File file = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.zip");
+		File file = new File("data/test.zip");
 		try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();
@@ -69,11 +69,12 @@ public class ToolServiceImplTest {
 				"name",
 				"test.zip",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.zip")
+				new FileInputStream("./data/test.zip")
 		);
 
 		String pathFileTmp = toolService.transferMultipartFileToFileTmp(multipartFile, "m-" + date + "-000001");
-		String pathFileTmpExpected = printWorldProperties.getTmp() + File.separator + "tmp_m-" + date + "-000001.zip";
+		File currentDirFile = new File(".");
+		String pathFileTmpExpected = currentDirFile.getAbsolutePath() + File.separator + printWorldProperties.getTmp() + File.separator + "tmp_m-" + date + "-000001.zip";
 
 		Assert.assertNotNull(pathFileTmp);
 		Assert.assertEquals("Path tmp file is equal from path tmp file expected", pathFileTmpExpected, pathFileTmp);
@@ -136,7 +137,7 @@ public class ToolServiceImplTest {
 	@Test
 	public void getPathFileTest() {
 		String filename = "m-" + date + "-000001.zip";
-		String pathFileExpected = "C:\\Users\\rbl\\Documents\\Projets\\TFE\\PrintWorld-backend\\data\\" + year + "\\" + month + "\\" + day + "\\01\\m-" + date + "-000001.zip";
+		String pathFileExpected = "./data" + File.separator + year + File.separator + month + File.separator + day + File.separator + "01" + File.separator + "m-" + date + "-000001.zip";
 
 		String pathFile = toolService.getPathFile(filename, "m-" + date + "-000001");
 
@@ -146,7 +147,7 @@ public class ToolServiceImplTest {
 
 
 	private File createFileForTest() {
-		File file = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.zip");
+		File file = new File("data/test.zip");
 		try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();

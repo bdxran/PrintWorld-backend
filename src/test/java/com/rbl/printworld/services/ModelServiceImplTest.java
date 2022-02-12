@@ -89,9 +89,9 @@ public class ModelServiceImplTest {
 			"    \"subCategoryIds\": [1, 2]\n" +
 			"}";
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
-			.tmp("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp")
-			.repositoryData("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data")
-			.metaCounter("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/configs/metaCounter.txt")
+			.tmp("./tmp")
+			.repositoryData("./data")
+			.metaCounter("./configs/metaCounter.txt")
 			.environment("test")
 			.build();
 
@@ -104,7 +104,7 @@ public class ModelServiceImplTest {
 	public void getModelByIdTest() throws IOException {
 		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
+		File imageTest = new File("./tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -126,7 +126,7 @@ public class ModelServiceImplTest {
 	public void getAllModelTest() throws IOException {
 		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
+		File imageTest = new File("./tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -139,7 +139,7 @@ public class ModelServiceImplTest {
 		Model model1 = this.expectedModel;
 		Model saveModel1 = modelService.createModel(multipartFileTest, images, this.expectedModelJson);
 
-		File imageTest2 = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
+		File imageTest2 = new File("./tmp/tmp_testImage.png");
 		try {
 			imageTest2.getParentFile().mkdirs();
 			imageTest2.createNewFile();
@@ -164,7 +164,7 @@ public class ModelServiceImplTest {
 	public void getAllModelPageTest() throws IOException {
 		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
+		File imageTest = new File("./tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -177,7 +177,7 @@ public class ModelServiceImplTest {
 		Model model1 = this.expectedModel;
 		Model saveModel1 = modelService.createModel(multipartFileTest, images, this.expectedModelJson);
 
-		File imageTest2 = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
+		File imageTest2 = new File("./tmp/tmp_testImage.png");
 		try {
 			imageTest2.getParentFile().mkdirs();
 			imageTest2.createNewFile();
@@ -202,7 +202,7 @@ public class ModelServiceImplTest {
 	public void createModelTest() throws IOException {
 		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
+		File imageTest = new File("./tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -221,7 +221,7 @@ public class ModelServiceImplTest {
 	public void modifyModelTest() throws IOException {
 		toolService.setMetaCounter(1);
 		MultipartFile multipartFileTest = createMultipartFileTest("testFile");
-		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
+		File imageTest = new File("./tmp/tmp_testImage.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -231,7 +231,7 @@ public class ModelServiceImplTest {
 		String[] images = new String[]{"testImage.png"};
 		Model model = modelService.createModel(multipartFileTest, images, this.expectedModelJson);
 
-		File imageTest2 = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/tmp_testImage.png");
+		File imageTest2 = new File("./tmp/tmp_testImage.png");
 		try {
 			imageTest2.getParentFile().mkdirs();
 			imageTest2.createNewFile();
@@ -256,7 +256,7 @@ public class ModelServiceImplTest {
 	}
 
 	private File createFileForTest() {
-		File file = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/2021/12/24/01/m-20211224-000001.zip");
+		File file = new File("./data/2021/12/24/01/m-20211224-000001.zip");
 		try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();
@@ -268,7 +268,7 @@ public class ModelServiceImplTest {
 	}
 
 	private MultipartFile createMultipartFileTest(String name) throws IOException {
-		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/" + name + ".zip");
+		File imageTest = new File("./data/" + name + ".zip");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -280,12 +280,12 @@ public class ModelServiceImplTest {
 				name,
 				name + ".zip",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/" + name + ".zip")
+				new FileInputStream("./data/" + name + ".zip")
 		);
 	}
 
 	private MultipartFile createMultipartImageTest(String name) throws IOException {
-		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/" + name + ".png");
+		File imageTest = new File("./data/" + name + ".png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -297,7 +297,7 @@ public class ModelServiceImplTest {
 				name,
 				name + ".png",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/" + name + ".png")
+				new FileInputStream("./data/" + name + ".png")
 		);
 	}
 }

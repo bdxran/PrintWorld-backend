@@ -48,9 +48,9 @@ public class ImageServiceImplTest {
 			.modelId("m-" + date + "-000001")
 			.build();
 	private final PrintWorldProperties printWorldProperties = PrintWorldProperties.builder()
-			.tmp("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp")
-			.repositoryData("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data")
-			.metaCounter("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/configs/metaCounter.txt")
+			.tmp("./tmp")
+			.repositoryData("./data")
+			.metaCounter("./configs/metaCounter.txt")
 			.environment("test")
 			.build();
 
@@ -103,7 +103,7 @@ public class ImageServiceImplTest {
 	@Test
 	public void uploadImageTest() throws IOException {
 		toolService.setMetaCounter(1);
-		File imageTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.png");
+		File imageTest = new File("./data/test.png");
 		try {
 			imageTest.getParentFile().mkdirs();
 			imageTest.createNewFile();
@@ -115,14 +115,14 @@ public class ImageServiceImplTest {
 				"test",
 				"test.png",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/data/test.png")
+				new FileInputStream("./data/test.png")
 		);
 
 		String imageTmpTest = imageService.uploadImage(multipartFile);
 
 		Assert.assertNotNull("Path tmp image is null!", imageTmpTest);
 
-		File fileTest = new File("C:/Users/rbl/Documents/Projets/TFE/PrintWorld-backend/tmp/" + imageTmpTest);
+		File fileTest = new File("./tmp/" + imageTmpTest);
 		if (!fileTest.exists()) {
 			Assert.fail("Test not pass because image " + imageTmpTest + " isn't create!");
 		}
