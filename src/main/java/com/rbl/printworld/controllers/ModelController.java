@@ -3,19 +3,27 @@ package com.rbl.printworld.controllers;
 import com.google.gson.Gson;
 import com.rbl.printworld.exceptions.ApplicationException;
 import com.rbl.printworld.models.Access;
+import com.rbl.printworld.models.Image;
 import com.rbl.printworld.models.Model;
 import com.rbl.printworld.models.User;
 import com.rbl.printworld.models.dto.ListResponseDto;
+import com.rbl.printworld.services.ImageService;
 import com.rbl.printworld.services.ModelService;
 import com.rbl.printworld.services.ToolService;
 import com.rbl.printworld.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Slf4j
 @RestController
@@ -27,13 +35,15 @@ public class ModelController {
 	private final ToolService toolService;
 	private final UserService userService;
 	private final ModelService modelService;
+	private final ImageService imageService;
 
 	@Autowired
-	public ModelController(ToolService toolService,
-	                       UserService userService, ModelService modelService) {
+	public ModelController(ToolService toolService, UserService userService,
+	                       ModelService modelService, ImageService imageService) {
 		this.toolService = toolService;
 		this.userService = userService;
 		this.modelService = modelService;
+		this.imageService = imageService;
 	}
 
 	/**
@@ -140,6 +150,11 @@ public class ModelController {
 		log.info("Call to delete model for id : " + id);
 		Model model = modelService.getModelById(id);
 
+		for(String idImage : model.getImageIds()) {
+			Image image = imageService.getImageById(idImage);
+			imageService.deleteImage(image);
+		}
+
 		if (!modelService.deleteModel(model)) {
 			log.error("Model with id " + model.getId() + " isn't delete");
 			throw new ApplicationException("500", "Model with id " + model.getId() + " isn't delete");
@@ -153,5 +168,22 @@ public class ModelController {
 				.contentType(mediaType)
 				.header(HttpHeaders.CONTENT_DISPOSITION)
 				.body("Model with id " + model.getId() + " is to delete");
+	}
+
+	@GetMapping("/download/{id}")
+	public ResponseEntity<?> downloadModel(@PathVariable("id") String id) {
+		Resource file = modelService.downloadModel(id);
+
+		try {
+			Path path = file.getFile().toPath();
+
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(path))
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
+							+ file.getFilename() + "\"")
+					.body(file);
+		} catch (IOException ex) {
+			throw new ApplicationException("500", "Error to recover image");
+		}
 	}
 }

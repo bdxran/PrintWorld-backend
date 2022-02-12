@@ -163,9 +163,21 @@ public class ToolServiceImpl implements ToolService {
 	}
 
 	@Override
-	public byte[] downloadFile(String id, String extension) {
-		//todo
-		return null;
+	public boolean saveMetaCounter() {
+		log.info("Get metaCounter");
+		try {
+			FileWriter myWriter = new FileWriter(this.properties.getMetaCounter());
+			myWriter.write(String.valueOf(this.metaCounter));
+			myWriter.close();
+			log.info("Successfully write to the file.");
+			return true;
+		} catch (FileNotFoundException ex) {
+			log.error("MetaCounter file isn't found!");
+			throw new ApplicationException("500", "MetaCounter file isn't found!");
+		} catch (IOException e) {
+			log.error("Error when write or close metaCounter file!");
+			throw new ApplicationException("500", "Error when read or close metaCounter file!");
+		}
 	}
 
 	/**

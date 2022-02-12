@@ -95,8 +95,12 @@ public class ImageController {
 		Image image = imageService.getImageById(id);
 		boolean imageIfdeleted = imageService.deleteImage(image);
 
-		if (imageIfdeleted)
+		if (imageIfdeleted) {
 			modelService.removeIdImage(image.getModelId(), id);
+		} else {
+			log.error("Image with id " + image.getId() + " isn't delete");
+			throw new ApplicationException("500", "Image with id " + image.getId() + " isn't delete");
+		}
 
 		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
 

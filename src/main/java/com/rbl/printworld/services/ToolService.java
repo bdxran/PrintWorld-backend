@@ -20,5 +20,5 @@ public interface ToolService {
 
 	String getPathFile(String filename, String id);
 
-	byte[] downloadFile(String id, String extension);
+	boolean saveMetaCounter();
 }
