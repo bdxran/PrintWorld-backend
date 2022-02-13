@@ -113,6 +113,36 @@ public class ToolServiceImplTest {
 	}
 
 	@Test
+	public void transferMultipartFileToImageTmpTest() throws IOException {
+		File file = new File("data/test.zip");
+		try {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+		} catch (IOException ex) {
+			Assert.fail("Not create file test!");
+		}
+
+		MultipartFile multipartFile = new MockMultipartFile(
+				"name",
+				"test.zip",
+				MediaType.APPLICATION_OCTET_STREAM_VALUE,
+				new FileInputStream("./data/test.zip")
+		);
+
+		String pathFileTmp = toolService.transferMultipartFileToFileTmp(multipartFile, "m-" + date + "-000001");
+		File currentDirFile = new File(".");
+		String pathFileTmpExpected = currentDirFile.getAbsolutePath() + File.separator + printWorldProperties.getTmp() + File.separator + "tmp_m-" + date + "-000001.zip";
+
+		Assert.assertNotNull(pathFileTmp);
+		Assert.assertNotEquals("Path tmp is void !", pathFileTmp, "");
+		Assert.assertEquals("Path tmp file is equal from path tmp file expected", pathFileTmpExpected, pathFileTmp);
+		File fileTmp = new File(pathFileTmpExpected);
+		if (!fileTmp.exists()) {
+			Assert.fail("Test not pass because file tmp isn't create!");
+		}
+	}
+
+	@Test
 	public void getExtensionFileTest() {
 		String extensionExpected = "zip";
 
