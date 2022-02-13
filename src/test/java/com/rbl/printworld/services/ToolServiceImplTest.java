@@ -34,6 +34,8 @@ import java.util.Date;
 @Slf4j
 public class ToolServiceImplTest {
 
+	private File currentDirFile = new File(".");
+	private String pathRoot = currentDirFile.getAbsolutePath().substring(0, currentDirFile.getAbsolutePath().lastIndexOf(File.separator));
 	private String pattern = "yyyyMMdd";
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 	private String date = simpleDateFormat.format(new Date());
@@ -78,8 +80,7 @@ public class ToolServiceImplTest {
 		);
 
 		String pathFileTmp = toolService.transferMultipartFileToFileTmp(multipartFile, "m-" + date + "-000001");
-		File currentDirFile = new File(".");
-		String pathFileTmpExpected = currentDirFile.getAbsolutePath() + File.separator + printWorldProperties.getTmp() + File.separator + "tmp_m-" + date + "-000001.zip";
+		String pathFileTmpExpected = this.pathRoot + File.separator + printWorldProperties.getTmp() + File.separator + "tmp_m-" + date + "-000001.zip";
 
 		Assert.assertNotNull(pathFileTmp);
 		Assert.assertNotEquals("Path tmp is void !", pathFileTmp, "");
@@ -131,14 +132,13 @@ public class ToolServiceImplTest {
 				new FileInputStream("./data/testblabla.jpeg")
 		);
 
-		String pathFileTmp = toolService.transferMultipartFileToImageTmp(multipartFile);
-		File currentDirFile = new File(".");
-		String pathFileTmpExpected = currentDirFile.getAbsolutePath() + File.separator + printWorldProperties.getTmp() + File.separator + "tmp_" + file.getName();
+		String nameFileTmp = toolService.transferMultipartFileToImageTmp(multipartFile);
+		String nameFileTmpExpected = "tmp_" + file.getName();
 
-		Assert.assertNotNull(pathFileTmp);
-		Assert.assertNotEquals("Path tmp is void !", pathFileTmp, "");
-		Assert.assertEquals("Path tmp file is equal from path tmp file expected", pathFileTmpExpected, pathFileTmp);
-		File fileTmp = new File(pathFileTmpExpected);
+		Assert.assertNotNull(nameFileTmp);
+		Assert.assertNotEquals("Path tmp is void !", nameFileTmp, "");
+		Assert.assertEquals("Path tmp file is equal from path tmp file expected", nameFileTmpExpected, nameFileTmp);
+		File fileTmp = new File(this.pathRoot + File.separator + this.printWorldProperties.getTmp() + File.separator + nameFileTmpExpected);
 		if (!fileTmp.exists()) {
 			Assert.fail("Test not pass because file tmp isn't create!");
 		}
@@ -186,6 +186,17 @@ public class ToolServiceImplTest {
 	}
 
 	@Test
+	public void deleteErrorTest() {
+		String pathFile = toolService.getPathFile("m-" + date + "-000042.zip", "m-" + date + "-000042");
+
+		ApplicationException applicationException = Assert.assertThrows(ApplicationException.class, () -> {
+			toolService.deleteFile(pathFile);
+		});
+		Assert.assertEquals("Error code is not 500 !", "500", applicationException.getErrorCode());
+		Assert.assertTrue(applicationException.getMessage().contains("File " + pathFile + " isn't delete"));
+	}
+
+	@Test
 	public void generateIdTest() {
 		String idExpected = "m-" + date + "-000001";
 		String id = toolService.generateId();
@@ -197,12 +208,31 @@ public class ToolServiceImplTest {
 	@Test
 	public void getPathFileTest() {
 		String filename = "m-" + date + "-000001.zip";
-		String pathFileExpected = "./data" + File.separator + year + File.separator + month + File.separator + day + File.separator + "01" + File.separator + "m-" + date + "-000001.zip";
+		String pathFileExpected = this.printWorldProperties.getRepositoryData() + File.separator + year + File.separator + month + File.separator + day + File.separator + "01" + File.separator + "m-" + date + "-000001.zip";
 
 		String pathFile = toolService.getPathFile(filename, "m-" + date + "-000001");
 
 		Assert.assertNotNull(pathFile);
 		Assert.assertEquals("The path file is equal path file expected", pathFileExpected, pathFile);
+	}
+
+	@Test
+	public void getPathFileCreateFolderTest() {
+		String filename = "m-" + date + "-000042.zip";
+		String pathFileExpected = this.printWorldProperties.getRepositoryData() + File.separator + year + File.separator + month + File.separator + day + File.separator + "42" + File.separator + "m-" + date + "-000042.zip";
+
+		String pathFile = toolService.getPathFile(filename, "m-" + date + "-000042");
+
+		Assert.assertNotNull(pathFile);
+		Assert.assertEquals("The path file is equal path file expected", pathFileExpected, pathFile);
+		String pathRepo = this.pathRoot + File.separator + this.printWorldProperties.getRepositoryData() + File.separator + year + File.separator + month + File.separator + day + File.separator + "42";
+		File repoForZip = new File(pathRepo);
+
+		if (!repoForZip.exists()) {
+			Assert.fail("Test not pass because repository for zip isn't create!");
+		}
+
+		toolService.deleteFile(pathRepo);
 	}
 
 

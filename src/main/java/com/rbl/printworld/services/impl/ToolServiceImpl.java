@@ -158,10 +158,7 @@ public class ToolServiceImpl implements ToolService {
 				+ File.separator + day + File.separator + folder;
 
 		if (!new File(path).exists()) {
-			if (!createFolder(path)) {
-				log.error("Not create folder : " + path);
-				throw new ApplicationException("500", "Not create folder : " + path);
-			}
+			createFolder(path);
 		}
 
 		return path + File.separator + filename;
@@ -298,12 +295,10 @@ public class ToolServiceImpl implements ToolService {
 			path = path.substring(0, path.lastIndexOf("/"));
 		}
 		File folder = new File(path);
-		if (!folder.exists()) {
-			folder.mkdirs();
-			log.info("Create repository : {}", path);
-			return true;
-		}
-		return false;
+
+		folder.mkdirs();
+		log.info("Create repository : {}", path);
+		return true;
 	}
 
 	/**
