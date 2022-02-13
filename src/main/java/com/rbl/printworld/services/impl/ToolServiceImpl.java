@@ -44,6 +44,10 @@ public class ToolServiceImpl implements ToolService {
 	@Override
 	public String transferMultipartFileToFileTmp(MultipartFile multipartFile, String id) {
 		log.info("Transfer multipartFile to file : " + multipartFile.getOriginalFilename());
+		if(id.equals("")){
+			log.error("Past id is void!");
+			throw new ApplicationException("500", "Past id is void!");
+		}
 		try {
 			File file = new File(this.properties.getTmp() + File.separator + "tmp_" + id + ".zip");
 
@@ -51,6 +55,7 @@ public class ToolServiceImpl implements ToolService {
 
 			return file.getAbsolutePath();
 		} catch (IOException ex) {
+			log.error("Error when transfer multipartFile to file!");
 			throw new ApplicationException("500", "Error when transfer multipartFile to file!");
 		}
 	}

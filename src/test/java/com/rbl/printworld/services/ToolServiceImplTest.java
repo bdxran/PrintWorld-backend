@@ -1,5 +1,7 @@
 package com.rbl.printworld.services;
 
+import com.rbl.printworld.exceptions.ApplicationException;
+import static org.mockito.Mockito.*;
 import com.rbl.printworld.models.Model;
 import com.rbl.printworld.models.PrintWorldProperties;
 import com.rbl.printworld.services.impl.ToolServiceImpl;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -77,11 +80,36 @@ public class ToolServiceImplTest {
 		String pathFileTmpExpected = currentDirFile.getAbsolutePath() + File.separator + printWorldProperties.getTmp() + File.separator + "tmp_m-" + date + "-000001.zip";
 
 		Assert.assertNotNull(pathFileTmp);
+		Assert.assertNotEquals("Path tmp is void !", pathFileTmp, "");
 		Assert.assertEquals("Path tmp file is equal from path tmp file expected", pathFileTmpExpected, pathFileTmp);
 		File fileTmp = new File(pathFileTmpExpected);
 		if (!fileTmp.exists()) {
 			Assert.fail("Test not pass because file tmp isn't create!");
 		}
+	}
+
+	@Test
+	public void transferMultipartFileToFileTmpTestErrorVoidId() throws IOException {
+		File file = new File("data/test.zip");
+		try {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+		} catch (IOException ex) {
+			Assert.fail("Not create file test!");
+		}
+
+		MultipartFile multipartFile = new MockMultipartFile(
+				"name",
+				"test.zip",
+				MediaType.APPLICATION_OCTET_STREAM_VALUE,
+				new FileInputStream("./data/test.zip")
+		);
+
+		ApplicationException applicationException = Assert.assertThrows(ApplicationException.class, () -> {
+			toolService.transferMultipartFileToFileTmp(multipartFile, "");
+		});
+		Assert.assertEquals("Error code is not 500 !", "500", applicationException.getErrorCode());
+		Assert.assertTrue(applicationException.getMessage().contains("Past id is void!"));
 	}
 
 	@Test
