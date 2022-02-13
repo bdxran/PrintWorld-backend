@@ -34,10 +34,6 @@ jobs:
           java-version: '11'
       - uses: actions/download-artifact@v2
         with:
-          name: integration-tests-jacoco
-          path: target/
-      - uses: actions/download-artifact@v2
-        with:
           name: unit-tests-jacoco
           path: target/
       - name: merge results
