@@ -2,8 +2,7 @@ name: Jacoco Distributed Exec and Aggregation
 
 on:
   push:
-    branches:
-      - "main"
+    branches: [ master, develop ]
 
 jobs:
   unit-tests:
