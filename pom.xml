@@ -98,7 +98,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -116,7 +115,7 @@
                     </execution>
                     <execution>
                         <id>default-report</id>
-                        <phase>test</phase>
+                        <phase>post-integration-test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
