@@ -1,7 +1,9 @@
 package com.rbl.printworld.services;
 
 import com.rbl.printworld.exceptions.ApplicationException;
+
 import static org.mockito.Mockito.*;
+
 import com.rbl.printworld.models.Model;
 import com.rbl.printworld.models.PrintWorldProperties;
 import com.rbl.printworld.services.impl.ToolServiceImpl;
@@ -114,7 +116,7 @@ public class ToolServiceImplTest {
 
 	@Test
 	public void transferMultipartFileToImageTmpTest() throws IOException {
-		File file = new File("data/test.zip");
+		File file = new File("data/testblabla.jpeg");
 		try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();
@@ -124,14 +126,14 @@ public class ToolServiceImplTest {
 
 		MultipartFile multipartFile = new MockMultipartFile(
 				"name",
-				"test.zip",
+				"testblabla.jpeg",
 				MediaType.APPLICATION_OCTET_STREAM_VALUE,
-				new FileInputStream("./data/test.zip")
+				new FileInputStream("./data/testblabla.jpeg")
 		);
 
-		String pathFileTmp = toolService.transferMultipartFileToFileTmp(multipartFile, "m-" + date + "-000001");
+		String pathFileTmp = toolService.transferMultipartFileToImageTmp(multipartFile);
 		File currentDirFile = new File(".");
-		String pathFileTmpExpected = currentDirFile.getAbsolutePath() + File.separator + printWorldProperties.getTmp() + File.separator + "tmp_m-" + date + "-000001.zip";
+		String pathFileTmpExpected = currentDirFile.getAbsolutePath() + File.separator + printWorldProperties.getTmp() + File.separator + "tmp_" + file.getName();
 
 		Assert.assertNotNull(pathFileTmp);
 		Assert.assertNotEquals("Path tmp is void !", pathFileTmp, "");
