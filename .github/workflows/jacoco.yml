@@ -41,5 +41,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: coverage-results-report
-          path: target/site/jacoco/
+          path: ./**/target/site/jacoco/
           if-no-files-found: error
