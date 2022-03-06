@@ -89,7 +89,7 @@ public class ImageServiceImplTest {
 			Assert.fail("Not create file test!");
 		}
 
-		String id = imageService.addImage(imageName, modelId);
+		String id = imageService.addImage(imageName, modelId, true);
 
 		Assert.assertNotNull("AddImage return id null!", id);
 		String pathImageExpected = toolService.getPathFile(id + ".png", modelId);

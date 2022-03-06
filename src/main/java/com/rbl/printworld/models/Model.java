@@ -27,4 +27,5 @@ public class Model implements ResponseModel {
 	private int categoryId;
 	private List<Integer> subCategoryIds;
 	private List<String> imageIds;
+	private String userId;
 }

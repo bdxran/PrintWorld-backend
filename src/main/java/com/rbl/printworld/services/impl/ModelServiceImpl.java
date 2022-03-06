@@ -63,6 +63,20 @@ public class ModelServiceImpl implements ModelService {
 		return new ListResponseDto<>(RequestStatus.SUCCESS, (long) models.size(), 1, models);
 	}
 
+	@Override
+	public ListResponseDto<Model> getAllModelByUser(Integer page, Integer limit, String userId) {
+		if (page != null && limit != null) {
+			log.info("Recover all model in page : " + page + " with limit : " + limit + " for user : " + userId);
+			Page<Model> modelPage = modelRepository.findAllByUserByPage(userId, PageRequest.of(page, limit)).orElseThrow(
+					() -> new ApplicationException("404", "Model with user id " + userId + " not found!"));
+			return new ListResponseDto<>(RequestStatus.SUCCESS, modelPage.getTotalElements(), modelPage.getTotalPages(), modelPage.getContent());
+		}
+		log.info("Recover all model for user : " + userId);
+		List<Model> models = modelRepository.findAllByUser(userId).orElseThrow(
+				() -> new ApplicationException("404", "Model with user id " + userId + " not found!"));
+		return new ListResponseDto<>(RequestStatus.SUCCESS, (long) models.size(), 1, models);
+	}
+
 	/**
 	 * Save upload file into the repertory data and new model into DB
 	 *
@@ -87,7 +101,11 @@ public class ModelServiceImpl implements ModelService {
 		List<String> imageIds = new ArrayList<>();
 		for (String image : images) {
 			log.info("Treat image : " + image);
-			imageIds.add(imageService.addImage(image, id));
+			if (images[0].equals(image)) {
+				imageIds.add(imageService.addImage(image, id, true));
+			} else {
+				imageIds.add(imageService.addImage(image, id, false));
+			}
 		}
 
 		model.setId(id);
@@ -134,7 +152,11 @@ public class ModelServiceImpl implements ModelService {
 			List<String> imageIds = model.getImageIds();
 			for (int i = 0; i < images.length; i++) {
 				log.info(images[i]);
-				imageIds.add(imageService.addImage(images[i], model.getId()));
+				if (i == 0 && imageService.getImagesByModelId(model.getId()).size() == 0) {
+					imageIds.add(imageService.addImage(images[i], model.getId(), true));
+				} else {
+					imageIds.add(imageService.addImage(images[i], model.getId(), false));
+				}
 			}
 			model.setImageIds(imageIds);
 		}

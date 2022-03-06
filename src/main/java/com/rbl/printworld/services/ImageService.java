@@ -12,7 +12,9 @@ public interface ImageService {
 
 	List<Image> getImagesByModelId(String modelId);
 
-	String addImage(String imageNameFile, String modelId);
+	Image getInlineImagesByModelId(String modelId);
+
+	String addImage(String imageNameFile, String modelId, boolean inline);
 
 	String uploadImage(MultipartFile image);
 

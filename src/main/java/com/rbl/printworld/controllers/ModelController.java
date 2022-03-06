@@ -72,8 +72,31 @@ public class ModelController {
 	 * @Param Integer limit but not required
 	 */
 	@GetMapping("/all")
-	public ResponseEntity<?> getAllModel(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer limit) {
+	public ResponseEntity<?> getAllModel(@RequestParam(required = false) Integer page,
+	                                     @RequestParam(required = false) Integer limit) {
 		ListResponseDto<Model> models = modelService.getAllModel(page, limit);
+
+		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
+
+		return ResponseEntity.ok()
+				.contentType(mediaType)
+				.header(HttpHeaders.CONTENT_DISPOSITION)
+				.body(new Gson().toJson(models));
+	}
+
+	/**
+	 * Web Service to get all model for user
+	 *
+	 * @return a ResponseEntity
+	 * @Param Integer page but not required
+	 * @Param Integer limit but not required
+	 * @Param String id user
+	 */
+	@GetMapping("/all/user")
+	public ResponseEntity<?> getAllModelByUser(@RequestParam(required = false) Integer page,
+	                                           @RequestParam(required = false) Integer limit,
+	                                           @RequestParam("userId") String userId) {
+		ListResponseDto<Model> models = modelService.getAllModelByUser(page, limit, userId);
 
 		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
 
@@ -91,7 +114,9 @@ public class ModelController {
 	 * @RequestBody model
 	 */
 	@PostMapping(value = "/create", consumes = "multipart/form-data")
-	public ResponseEntity<?> createModel(@RequestParam("file") MultipartFile file, @RequestParam("images") String[] images, @RequestParam("model") String modelJson) {
+	public ResponseEntity<?> createModel(@RequestParam("file") MultipartFile file,
+	                                     @RequestParam("images") String[] images,
+	                                     @RequestParam("model") String modelJson) {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}
@@ -142,7 +167,7 @@ public class ModelController {
 	 * @RequestBody model
 	 */
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<Object> deleteModel(@PathVariable String id) {
+	public ResponseEntity<Object> deleteModel(@PathVariable("id") String id) {
 		if (!userService.getAccessLevelUser(user)) {
 			throw new ApplicationException("403", "Bad access, level USER");
 		}

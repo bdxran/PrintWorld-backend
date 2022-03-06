@@ -17,5 +17,6 @@ public class Image {
 	private String id;
 	private String name;
 	private String extension;
+	private boolean inline;
 	private String modelId;
 }

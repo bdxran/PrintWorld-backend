@@ -11,4 +11,7 @@ public interface ImageRepository extends MongoRepository<Image, String> {
 
 	@Query(value = "{'modelId' : ?0 }")
 	Optional<List<Image>> findByModelId(String modelId);
+
+	@Query(value = "{'modelId' : ?0, 'inline': true }")
+	Optional<Image> findInlineByModelId(String modelId);
 }

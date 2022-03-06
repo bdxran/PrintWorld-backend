@@ -11,6 +11,8 @@ public interface ModelService {
 
 	ListResponseDto<Model> getAllModel(Integer page, Integer limit);
 
+	ListResponseDto<Model> getAllModelByUser(Integer page, Integer limit, String userId);
+
 	Model createModel(MultipartFile file, String[] images, String model);
 
 	Model modifyModel(MultipartFile file, String[] images, String model);

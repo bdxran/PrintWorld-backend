@@ -61,6 +61,18 @@ public class ImageController {
 				.body(new Gson().toJson(images));
 	}
 
+	@GetMapping("/inline/{modelId}")
+	public ResponseEntity<?> getInlineImageByModelId(@PathVariable("modelId") String modelId) {
+		Image image = imageService.getInlineImagesByModelId(modelId);
+
+		MediaType mediaType = MediaType.parseMediaType("application/octet-stream");
+
+		return ResponseEntity.ok()
+				.contentType(mediaType)
+				.header(HttpHeaders.CONTENT_DISPOSITION)
+				.body(new Gson().toJson(image));
+	}
+
 	@PostMapping("/upload")
 	public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile image) {
 		String imageTmp = imageService.uploadImage(image);

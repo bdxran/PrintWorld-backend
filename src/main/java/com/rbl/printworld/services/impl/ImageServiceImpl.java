@@ -48,6 +48,14 @@ public class ImageServiceImpl implements ImageService {
 				() -> new ApplicationException("404", "Images with model id " + modelId + " not found!"));
 	}
 
+	@Override
+	public Image getInlineImagesByModelId(String modelId) {
+		log.info("Search images by model id : " + modelId);
+
+		return imageRepository.findInlineByModelId(modelId).orElseThrow(
+				() -> new ApplicationException("404", "Images with model id " + modelId + " not found!"));
+	}
+
 	/**
 	 * Allow save image to tmp directory
 	 *
@@ -56,7 +64,7 @@ public class ImageServiceImpl implements ImageService {
 	 * @parma modelId
 	 */
 	@Override
-	public String addImage(String imageNameFile, String modelId) {
+	public String addImage(String imageNameFile, String modelId, boolean inline) {
 		log.info("Save a new image : " + imageNameFile);
 
 		String imageTmp = "tmp_" + imageNameFile;
@@ -70,6 +78,7 @@ public class ImageServiceImpl implements ImageService {
 				.name(imageName)
 				.extension(extension)
 				.modelId(modelId)
+				.inline(inline)
 				.build();
 
 		String filename = imageId + "." + extension;
