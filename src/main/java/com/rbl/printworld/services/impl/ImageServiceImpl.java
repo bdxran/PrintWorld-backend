@@ -2,7 +2,6 @@ package com.rbl.printworld.services.impl;
 
 import com.rbl.printworld.exceptions.ApplicationException;
 import com.rbl.printworld.models.Image;
-import com.rbl.printworld.models.Model;
 import com.rbl.printworld.models.PrintWorldProperties;
 import com.rbl.printworld.repositories.ImageRepository;
 import com.rbl.printworld.services.ImageService;
